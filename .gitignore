@@ -10,6 +10,9 @@
 # Ruby version is environment-specific
 .ruby-version
 
+# Gemfile.lock is environment-specific (different gem versions per Ruby)
+Gemfile.lock
+
 # Ignore all environment files (except templates).
 /.env*
 !/.env*.erb
