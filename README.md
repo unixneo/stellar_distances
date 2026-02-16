@@ -10,22 +10,58 @@ This calculator illustrates the fundamental challenge of interstellar travel. Ev
 
 ## Features
 
-- **34 Destinations**: From the Moon (384,400 km) to the Andromeda Galaxy (2.5 million light years)
-- **10 Propulsion Systems**: From current Voyager-class rockets to theoretical antimatter drives
+- **43 Destinations**: From the Moon (384,400 km) to the Andromeda Galaxy (2.5 million light years)
+- **11 Propulsion Systems**: From current Voyager-class rockets to theoretical antimatter drives
+- **Realistic Orbital Mechanics**: Solar system travel times based on actual mission data (Hohmann transfers, gravity assists)
+- **Scientific Disclaimers**: Clear explanations of calculation methodology
 - **Reality Checks**: Contextualizes travel times against human history and civilization
 - **Energy Requirements**: Shows kinetic energy needed in Hiroshima bombs and world-years of energy production
 - **Communication Delays**: Light-speed message round-trip times
 
-## Sample Results
+## Solar System: Realistic Mission Times
+
+For solar system destinations, travel times are based on actual missions, not straight-line calculations. Spacecraft don't travel in straight lines—they follow curved trajectories determined by orbital mechanics.
+
+| Destination | Realistic Time | Based On |
+|------------|---------------|----------|
+| The Moon | 3 days | Apollo missions |
+| Venus | 110 days | Mariner 2 |
+| Mars | 8.5 months | Hohmann transfer orbit |
+| Jupiter | 2 years | Varies by trajectory |
+| Saturn | 7 years | Cassini-Huygens |
+| Uranus | 8.4 years | Voyager 2 |
+| Neptune | 12 years | Voyager 2 |
+| Pluto | 9.5 years | New Horizons |
+
+## Interstellar: The Sobering Reality
 
 | Destination | Propulsion | Travel Time |
 |------------|------------|-------------|
-| The Moon | Voyager-class | 6 hours |
-| Mars (average) | Voyager-class | 5 months |
-| Pluto | Voyager-class | 11 years |
 | Proxima Centauri (4.2 ly) | Voyager-class | 74,889 years |
+| Proxima Centauri | SpaceX Starship | 57,868 years |
 | Proxima Centauri | Laser Light Sail (20% c) | 21 years |
 | Andromeda Galaxy | Antimatter Rocket | 25.4 million years |
+
+Note: SpaceX Starship is revolutionary for Mars colonization, but doesn't change the fundamental physics of interstellar travel.
+
+## Propulsion Systems
+
+### Current Technology
+- **Chemical Rocket (Voyager-class)**: 17 km/s - Operational
+- **Chemical Rocket (New Horizons)**: 16.26 km/s - Operational
+- **Ion Drive (Dawn)**: 11 km/s - Operational
+- **Solar Sail**: 200 km/s - Demonstrated
+
+### In Development / Near-Future
+- **SpaceX Starship**: 22 km/s - In Development
+- **Nuclear Thermal (NERVA-class)**: 50 km/s - Tested Historically
+- **Laser Light Sail (Breakthrough Starshot)**: 60,000 km/s (20% c) - Proposed
+
+### Theoretical / Speculative
+- **Nuclear Pulse (Project Orion)**: 10,000 km/s - Theoretical (Banned)
+- **Fusion Rocket (Project Daedalus)**: 36,000 km/s - Theoretical
+- **Antimatter Rocket**: 100,000 km/s - Far Future
+- **Bussard Ramjet**: 290,000 km/s - Speculative
 
 ## Installation
 
@@ -37,15 +73,13 @@ cd stellar_distances
 # Install dependencies
 bundle install
 
-# Setup database
-rails db:migrate
-rails db:seed
-
-# Start the server
+# Start the server (database included)
 rails server
 ```
 
 Visit `http://localhost:3000`
+
+The SQLite database with all destinations and propulsion systems is included in the repository for convenience.
 
 ## Requirements
 
@@ -53,31 +87,19 @@ Visit `http://localhost:3000`
 - Rails 7.1+
 - SQLite3
 
-## Data Sources
-
-### Solar System Distances
-Average distances from Earth. Actual distances vary with orbital positions.
-
-### Stellar Distances
-Based on current astronomical measurements (parallax, spectroscopic methods).
-
-### Propulsion Systems
-- **Operational**: Voyager, New Horizons, Dawn spacecraft actual velocities
-- **Demonstrated**: Solar sail technology (IKAROS, LightSail)
-- **Tested Historically**: NERVA nuclear thermal rocket program
-- **Theoretical**: Project Daedalus, Breakthrough Starshot, antimatter propulsion
-- **Speculative**: Bussard ramjet
-
 ## The Math
 
-Travel time is calculated simply:
-
+### Interstellar (straight-line calculation)
 ```
 time = distance / velocity
 ```
 
-Kinetic energy:
+This is valid for interstellar distances where orbital mechanics become negligible.
 
+### Solar System (orbital mechanics)
+Travel times are based on actual mission data using Hohmann transfer orbits and gravity assists. The straight-line calculation is shown for comparison but doesn't reflect how spacecraft actually navigate.
+
+### Energy Requirements
 ```
 KE = 0.5 × mass × velocity²
 ```
@@ -90,7 +112,7 @@ Energy comparisons:
 
 The universe is not built to human scale. The nearest star is 4.2 light years away—a distance so vast that even at 20% of light speed (far beyond current capability), it would take over 20 years to reach.
 
-At speeds we can actually achieve today, visiting even our closest stellar neighbor would take longer than human civilization has existed.
+At speeds we can actually achieve today (including Starship), visiting even our closest stellar neighbor would take longer than human civilization has existed.
 
 This isn't pessimism. It's physics.
 
