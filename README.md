@@ -81,9 +81,36 @@ Visit `http://localhost:3000`
 
 The SQLite database with all destinations and propulsion systems is included in the repository for convenience.
 
+## Host Configuration
+
+Rails 7 requires explicit host authorization. The app is configured for `www.unix.com` by default.
+
+To run on a different host, edit `config/initializers/hosts.rb`:
+
+```ruby
+# Allow your host
+Rails.application.config.hosts << "your-domain.com"
+
+# Or allow all hosts (development only)
+Rails.application.config.hosts.clear
+```
+
+## Proxy Deployment
+
+The app includes routes for both direct and proxied access:
+
+- Direct: `/` and `/journeys/calculate`
+- Proxied: `/stellar/journey` and `/stellar/journey/calculate`
+
+For Apache reverse proxy:
+
+```apache
+RewriteRule ^stellar(/.*)?$ http://127.0.0.1:3002$1 [P,L,END]
+```
+
 ## Requirements
 
-- Ruby 3.2+
+- Ruby 3.0.4+
 - Rails 7.1+
 - SQLite3
 
