@@ -48,8 +48,8 @@
               <option value="<%= prop.id %>"><%= prop.name %></option>
             <% end %>
           </optgroup>
-          <optgroup label="Near-Future">
-            <% @propulsion_systems.where(technology_readiness: ["Tested Historically", "Proposed"]).each do |prop| %>
+          <optgroup label="In Development / Near-Future">
+            <% @propulsion_systems.where(technology_readiness: ["In Development", "Tested Historically", "Proposed"]).each do |prop| %>
               <option value="<%= prop.id %>"><%= prop.name %></option>
             <% end %>
           </optgroup>
@@ -129,7 +129,7 @@
             <td>
               <% status_class = case prop.technology_readiness
                  when "Operational", "Demonstrated" then "status-operational"
-                 when "Tested Historically", "Proposed" then "status-tested"
+                 when "In Development", "Tested Historically", "Proposed" then "status-tested"
                  when "Far Future" then "status-far-future"
                  else "status-theoretical"
                  end %>
