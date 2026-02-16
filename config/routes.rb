@@ -13,4 +13,7 @@ Rails.application.routes.draw do
   
   # Health check endpoint
   get "up" => "rails/health#show", as: :rails_health_check
+  
+  # Catch-all: render the index page for unknown routes (no redirect)
+  get "*path", to: "journeys#index"
 end
