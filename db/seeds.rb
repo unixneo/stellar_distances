@@ -317,6 +317,12 @@ propulsion_data = [
     technology_readiness: "Operational"
   },
   {
+    name: "SpaceX Starship (Mars transit)",
+    velocity_km_s: 22.0,
+    description: "SpaceX's fully reusable heavy-lift vehicle. Uses methane/LOX Raptor engines. Designed for Mars colonization with ~100 passenger capacity. Revolutionary for payload and reusability, but still limited by chemical propulsion physics. Mars transit velocity ~22 km/s via Hohmann transfer.",
+    technology_readiness: "In Development"
+  },
+  {
     name: "Ion Drive (Dawn spacecraft)",
     velocity_km_s: 11.0,
     description: "Xenon ion propulsion. Very efficient but low thrust. Good for long-duration missions within the solar system.",
