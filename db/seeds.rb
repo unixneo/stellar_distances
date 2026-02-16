@@ -343,7 +343,7 @@ propulsion_data = [
   {
     name: "Nuclear Pulse (Project Orion)",
     velocity_km_s: 10000.0,
-    description: "Propulsion by nuclear bomb explosions. Studied in 1950s-60s. Could theoretically reach 3-5% of light speed. Banned by treaties.",
+    description: "Studied by DARPA 1958-1965. Propulsion by detonating nuclear bombs behind a pusher plate. The physics actually works—small-scale tests with conventional explosives were successful. Could reach 3-5% of light speed with a large enough ship. Banned by the 1963 Partial Test Ban Treaty (no nuclear explosions in space). The only interstellar propulsion concept that was both physically feasible AND could have been built with 1960s technology. Requires thousands of nuclear bombs per mission.",
     technology_readiness: "Theoretical (Banned)"
   },
   {
@@ -355,19 +355,19 @@ propulsion_data = [
   {
     name: "Fusion Rocket (Project Daedalus)",
     velocity_km_s: 36000.0,
-    description: "1970s British Interplanetary Society study. Deuterium/Helium-3 fusion. Designed for 50-year trip to Barnard's Star at 12% c.",
+    description: "1970s British Interplanetary Society study using Deuterium/Helium-3 fusion. Designed as a 50-year flyby mission to Barnard's Star. Major obstacles: we have not achieved sustained fusion ignition on Earth (despite 70+ years of trying), Helium-3 is extremely rare (would need mining from lunar regolith or gas giant atmospheres), and the proposed 54,000-ton spacecraft would require orbital assembly over decades. Serious engineering study, but no clear path to construction.",
     technology_readiness: "Theoretical"
   },
   {
     name: "Antimatter Rocket (Theoretical)",
     velocity_km_s: 100000.0,
-    description: "Matter-antimatter annihilation. Most energetic possible reaction. Current antimatter production is nanograms per year at enormous cost.",
+    description: "Matter-antimatter annihilation is the most energetic reaction possible—1000x more efficient than fusion. However, current global antimatter production is about 10 nanograms per year at a cost of ~$62.5 trillion per gram. An interstellar mission would need kilograms of antimatter. Storage is also unsolved—antimatter annihilates on contact with normal matter. Even with breakthroughs, this is likely centuries away. The physics is real; the engineering is science fiction.",
     technology_readiness: "Far Future"
   },
   {
     name: "Bussard Ramjet (Interstellar)",
     velocity_km_s: 290000.0,
-    description: "Collects interstellar hydrogen as fuel. Theoretically could approach light speed. Physics may not actually work as hoped.",
+    description: "Proposed in 1960 by physicist Robert Bussard. Uses a huge magnetic scoop (thousands of km wide) to collect interstellar hydrogen for fusion fuel. Elegant concept—the faster you go, the more fuel you collect. However, later analysis showed fatal flaws: interstellar medium is too thin, drag from the scoop likely exceeds thrust, and the fusion reaction may not work with pure hydrogen. Most physicists now consider this concept unworkable. Included here as a historical benchmark for 'best case' interstellar travel.",
     technology_readiness: "Speculative"
   }
 ]
