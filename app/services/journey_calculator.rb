@@ -205,6 +205,12 @@ class JourneyCalculator
       checks << "Nuclear pulse propulsion is banned by international treaty."
     end
 
+    if propulsion_system.name.include?("Light Sail") || propulsion_system.name.include?("Starshot")
+      if payload_mass_kg > 1
+        checks << "Laser-pushed light sails can only accelerate gram-scale probes (~1 gram), not #{payload_mass_kg.round(0)} kg. This technology cannot carry humans or large payloads."
+      end
+    end
+
     checks
   end
 end
