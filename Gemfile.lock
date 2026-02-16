@@ -99,21 +99,23 @@ GEM
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
     cgi (0.5.1)
+    childprocess (4.1.0)
     concurrent-ruby (1.3.6)
-    connection_pool (3.0.2)
+    connection_pool (2.5.5)
     crass (1.0.6)
     date (3.5.1)
     debug (1.11.1)
       irb (~> 1.10)
       reline (>= 0.3.8)
     drb (2.2.3)
-    erb (6.0.1)
+    erb (4.0.4)
+      cgi (>= 0.3.3)
     erubi (1.13.1)
     globalid (1.3.0)
       activesupport (>= 6.1)
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
-    importmap-rails (2.2.3)
+    importmap-rails (2.0.3)
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
       railties (>= 6.0.0)
@@ -139,11 +141,10 @@ GEM
     marcel (1.1.0)
     matrix (0.4.3)
     mini_mime (1.1.5)
-    minitest (6.0.1)
-      prism (~> 1.5)
+    minitest (5.26.1)
     msgpack (1.8.0)
     mutex_m (0.3.0)
-    net-imap (0.6.3)
+    net-imap (0.4.23)
       date
       net-protocol
     net-pop (0.1.2)
@@ -153,21 +154,15 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.5)
-    nokogiri (1.19.0-aarch64-linux-gnu)
+    nokogiri (1.17.2-aarch64-linux)
       racc (~> 1.4)
-    nokogiri (1.19.0-aarch64-linux-musl)
+    nokogiri (1.17.2-arm-linux)
       racc (~> 1.4)
-    nokogiri (1.19.0-arm-linux-gnu)
+    nokogiri (1.17.2-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.19.0-arm-linux-musl)
+    nokogiri (1.17.2-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.19.0-arm64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.19.0-x86_64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.19.0-x86_64-linux-gnu)
-      racc (~> 1.4)
-    nokogiri (1.19.0-x86_64-linux-musl)
+    nokogiri (1.17.2-x86_64-linux)
       racc (~> 1.4)
     pp (0.6.3)
       prettyprint
@@ -176,7 +171,7 @@ GEM
     psych (5.3.1)
       date
       stringio
-    public_suffix (7.0.2)
+    public_suffix (6.0.2)
     puma (7.2.0)
       nio4r (~> 2.0)
     racc (1.8.1)
@@ -229,13 +224,11 @@ GEM
       io-console (~> 0.5)
     rexml (3.4.4)
     rubyzip (3.2.2)
-    securerandom (0.4.1)
-    selenium-webdriver (4.40.0)
-      base64 (~> 0.2)
-      logger (~> 1.4)
+    securerandom (0.3.2)
+    selenium-webdriver (4.1.0)
+      childprocess (>= 0.5, < 5.0)
       rexml (~> 3.2, >= 3.2.5)
-      rubyzip (>= 1.2.2, < 4.0)
-      websocket (~> 1.0)
+      rubyzip (>= 1.2.2)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -255,9 +248,9 @@ GEM
     thor (1.5.0)
     timeout (0.6.0)
     tsort (0.2.0)
-    turbo-rails (2.0.23)
-      actionpack (>= 7.1.0)
-      railties (>= 7.1.0)
+    turbo-rails (2.0.12)
+      actionpack (>= 6.0.0)
+      railties (>= 6.0.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     web-console (4.2.1)
@@ -265,26 +258,25 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    websocket (1.2.11)
     websocket-driver (0.8.0)
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    zeitwerk (2.7.4)
+    zeitwerk (2.6.18)
 
 PLATFORMS
   aarch64-linux
-  aarch64-linux-gnu
+  aarch64-linux
   aarch64-linux-musl
   arm-linux
-  arm-linux-gnu
+  arm-linux
   arm-linux-musl
   arm64-darwin
   x86_64-darwin
   x86_64-linux
-  x86_64-linux-gnu
+  x86_64-linux
   x86_64-linux-musl
 
 DEPENDENCIES
@@ -307,4 +299,4 @@ RUBY VERSION
    ruby 3.2.2p53
 
 BUNDLED WITH
-   2.5.3
+   2.3.26

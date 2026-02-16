@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   
   # Direct access routes
   get "journeys", to: "journeys#index"
+  get "journey/calculate", to: "journeys#calculate"
   get "journeys/calculate", to: "journeys#calculate"
   
   # Health check endpoint
