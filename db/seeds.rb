@@ -349,7 +349,7 @@ propulsion_data = [
   {
     name: "Laser-Pushed Light Sail (Breakthrough Starshot)",
     velocity_km_s: 60000.0,
-    description: "Gram-scale probe accelerated by ground-based laser array to 20% of light speed. Proposed for Alpha Centauri mission. Would take 20-30 years.",
+    description: "$100M funded project (2016) to send gram-scale probes to Alpha Centauri. Physics is sound but major engineering challenges remain: requires 100 GW laser array (doesn't exist), sail material that survives intense laser heating (not yet developed), and chips that survive 60,000g acceleration (not yet built). Probes would fly by at 20% c with only hours to photograph target. One-way only—no deceleration, no return. Cannot carry humans. Realistic timeline: 2060-2080 if all challenges are solved.",
     technology_readiness: "Proposed"
   },
   {
