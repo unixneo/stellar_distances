@@ -8,6 +8,103 @@ LIGHT_YEAR_KM = 9.461e12
 Star.destroy_all
 PropulsionSystem.destroy_all
 
+# === SOLAR SYSTEM ===
+# Average distances from Earth (varies with orbital positions)
+# Converting km to light years: distance_km / LIGHT_YEAR_KM
+
+solar_system_data = [
+  {
+    name: "The Moon",
+    distance_km: 384_400,
+    constellation: "Solar System",
+    star_type: "Natural Satellite",
+    notes: "Earth's only natural satellite. Humans last visited in 1972 (Apollo 17). Average distance varies from 356,500 to 406,700 km."
+  },
+  {
+    name: "Venus (closest approach)",
+    distance_km: 38_000_000,
+    constellation: "Solar System",
+    star_type: "Terrestrial Planet",
+    notes: "Closest planet to Earth at nearest approach. Surface temperature of 465°C due to runaway greenhouse effect."
+  },
+  {
+    name: "Mars (closest approach)",
+    distance_km: 54_600_000,
+    constellation: "Solar System",
+    star_type: "Terrestrial Planet",
+    notes: "Closest approach varies from 54.6 to 401 million km depending on orbital positions. Current target for human exploration."
+  },
+  {
+    name: "Mars (average)",
+    distance_km: 225_000_000,
+    constellation: "Solar System",
+    star_type: "Terrestrial Planet",
+    notes: "Average distance to Mars. Typical mission travel time is 7-9 months with current technology."
+  },
+  {
+    name: "Jupiter",
+    distance_km: 628_730_000,
+    constellation: "Solar System",
+    star_type: "Gas Giant",
+    notes: "Largest planet. Average distance from Earth. Has 95 known moons including the four large Galilean moons."
+  },
+  {
+    name: "Saturn",
+    distance_km: 1_275_000_000,
+    constellation: "Solar System",
+    star_type: "Gas Giant",
+    notes: "Famous for its rings. Cassini mission took 7 years to arrive. Has 146 known moons including Titan."
+  },
+  {
+    name: "Uranus",
+    distance_km: 2_724_000_000,
+    constellation: "Solar System",
+    star_type: "Ice Giant",
+    notes: "Only visited by Voyager 2 in 1986. Rotates on its side. Takes 84 Earth years to orbit the Sun."
+  },
+  {
+    name: "Neptune",
+    distance_km: 4_351_000_000,
+    constellation: "Solar System",
+    star_type: "Ice Giant",
+    notes: "Only visited by Voyager 2 in 1989. Voyager 2 took 12 years to reach Neptune. Has the strongest winds in the solar system."
+  },
+  {
+    name: "Pluto",
+    distance_km: 5_900_000_000,
+    constellation: "Solar System",
+    star_type: "Dwarf Planet",
+    notes: "New Horizons took 9.5 years to reach Pluto in 2015. Average distance varies significantly due to eccentric orbit."
+  },
+  {
+    name: "Voyager 1 (current position)",
+    distance_km: 24_500_000_000,
+    constellation: "Solar System",
+    star_type: "Spacecraft",
+    notes: "Launched 1977, now in interstellar space. Most distant human-made object. Still communicating with Earth."
+  },
+  {
+    name: "Oort Cloud (inner edge)",
+    distance_km: 300_000_000_000,
+    constellation: "Solar System",
+    star_type: "Cometary Cloud",
+    notes: "Theoretical sphere of icy objects surrounding the solar system. Source of long-period comets."
+  }
+]
+
+solar_system_data.each do |body|
+  Star.create!(
+    name: body[:name],
+    distance_ly: body[:distance_km] / LIGHT_YEAR_KM,
+    distance_km: body[:distance_km],
+    constellation: body[:constellation],
+    star_type: body[:star_type],
+    notes: body[:notes]
+  )
+end
+
+puts "Created #{Star.count} solar system bodies"
+
 # === STARS ===
 # Nearby stars with accurate distances
 

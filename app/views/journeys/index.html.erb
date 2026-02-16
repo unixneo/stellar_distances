@@ -9,23 +9,31 @@
       <div class="form-group">
         <label for="star_id">Destination</label>
         <select name="star_id" id="star_id">
+          <optgroup label="Solar System">
+            <% @stars.where(constellation: "Solar System").each do |body| %>
+              <option value="<%= body.id %>">
+                <%= body.name %>
+                (<%= body.distance_km < 1_000_000_000 ? "#{number_with_delimiter((body.distance_km / 1_000_000).round(1))} M km" : "#{number_with_delimiter((body.distance_km / 1_000_000_000).round(1))} B km" %>)
+              </option>
+            <% end %>
+          </optgroup>
           <optgroup label="Nearby Stars (< 15 light years)">
-            <% @stars.where("distance_ly < 15").each do |star| %>
+            <% @stars.where("distance_ly < 15 AND constellation != 'Solar System'").each do |star| %>
               <option value="<%= star.id %>"><%= star.name %> (<%= star.distance_ly.round(2) %> ly)</option>
             <% end %>
           </optgroup>
           <optgroup label="Notable Stars (15-100 ly)">
-            <% @stars.where("distance_ly >= 15 AND distance_ly < 100").each do |star| %>
+            <% @stars.where("distance_ly >= 15 AND distance_ly < 100 AND constellation != 'Solar System'").each do |star| %>
               <option value="<%= star.id %>"><%= star.name %> (<%= star.distance_ly.round(0) %> ly)</option>
             <% end %>
           </optgroup>
           <optgroup label="Distant Stars (100-1000 ly)">
-            <% @stars.where("distance_ly >= 100 AND distance_ly < 1000").each do |star| %>
+            <% @stars.where("distance_ly >= 100 AND distance_ly < 1000 AND constellation != 'Solar System'").each do |star| %>
               <option value="<%= star.id %>"><%= star.name %> (<%= star.distance_ly.round(0) %> ly)</option>
             <% end %>
           </optgroup>
           <optgroup label="Very Distant (> 1000 ly)">
-            <% @stars.where("distance_ly >= 1000").each do |star| %>
+            <% @stars.where("distance_ly >= 1000 AND constellation != 'Solar System'").each do |star| %>
               <option value="<%= star.id %>"><%= star.name %> (<%= number_with_delimiter(star.distance_ly.round(0)) %> ly)</option>
             <% end %>
           </optgroup>
