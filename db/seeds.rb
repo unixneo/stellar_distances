@@ -18,77 +18,90 @@ solar_system_data = [
     distance_km: 384_400,
     constellation: "Solar System",
     star_type: "Natural Satellite",
-    notes: "Earth's only natural satellite. Humans last visited in 1972 (Apollo 17). Average distance varies from 356,500 to 406,700 km."
+    notes: "Earth's only natural satellite. Humans last visited in 1972 (Apollo 17). Average distance varies from 356,500 to 406,700 km.",
+    realistic_travel_days: 3.0,
+    realistic_travel_notes: "Based on Apollo missions (1969-1972). Uses Hohmann-like transfer orbit. Actual transit time was about 3 days each way."
   },
   {
-    name: "Venus (closest approach)",
-    distance_km: 38_000_000,
+    name: "Venus",
+    distance_km: 41_400_000,
     constellation: "Solar System",
     star_type: "Terrestrial Planet",
-    notes: "Closest planet to Earth at nearest approach. Surface temperature of 465°C due to runaway greenhouse effect."
+    notes: "Closest planet to Earth at nearest approach (38M km), average distance 41M km. Surface temperature of 465°C due to runaway greenhouse effect.",
+    realistic_travel_days: 110.0,
+    realistic_travel_notes: "Based on Mariner 2 (1962): 110 days. Actual travel time varies 97-153 days depending on launch window and trajectory type."
   },
   {
-    name: "Mars (closest approach)",
-    distance_km: 54_600_000,
-    constellation: "Solar System",
-    star_type: "Terrestrial Planet",
-    notes: "Closest approach varies from 54.6 to 401 million km depending on orbital positions. Current target for human exploration."
-  },
-  {
-    name: "Mars (average)",
+    name: "Mars",
     distance_km: 225_000_000,
     constellation: "Solar System",
     star_type: "Terrestrial Planet",
-    notes: "Average distance to Mars. Typical mission travel time is 7-9 months with current technology."
+    notes: "Average distance shown. Actual distance varies from 54.6 to 401 million km depending on orbital positions. Launch windows occur every 26 months.",
+    realistic_travel_days: 255.0,
+    realistic_travel_notes: "Based on Hohmann transfer orbit (~8.5 months). Recent missions: Perseverance 204 days, Curiosity 254 days, Mars Science Lab 253 days. Faster trajectories possible but require more fuel."
   },
   {
     name: "Jupiter",
     distance_km: 628_730_000,
     constellation: "Solar System",
     star_type: "Gas Giant",
-    notes: "Largest planet. Average distance from Earth. Has 95 known moons including the four large Galilean moons."
+    notes: "Largest planet. Average distance from Earth. Has 95 known moons including the four large Galilean moons.",
+    realistic_travel_days: 730.0,
+    realistic_travel_notes: "Varies greatly by trajectory. Galileo: 6 years (with Venus/Earth gravity assists). Juno: 5 years. New Horizons: 13 months (fastest, Jupiter flyby only). Typical orbiter mission: 2-6 years."
   },
   {
     name: "Saturn",
     distance_km: 1_275_000_000,
     constellation: "Solar System",
     star_type: "Gas Giant",
-    notes: "Famous for its rings. Cassini mission took 7 years to arrive. Has 146 known moons including Titan."
+    notes: "Famous for its rings. Has 146 known moons including Titan with its thick atmosphere.",
+    realistic_travel_days: 2550.0,
+    realistic_travel_notes: "Based on Cassini-Huygens: 7 years (with Venus-Venus-Earth-Jupiter gravity assists). Pioneer 11: 6.5 years. Direct Hohmann transfer would take ~6 years minimum."
   },
   {
     name: "Uranus",
     distance_km: 2_724_000_000,
     constellation: "Solar System",
     star_type: "Ice Giant",
-    notes: "Only visited by Voyager 2 in 1986. Rotates on its side. Takes 84 Earth years to orbit the Sun."
+    notes: "Only visited by Voyager 2 in 1986. Rotates on its side. Takes 84 Earth years to orbit the Sun.",
+    realistic_travel_days: 3066.0,
+    realistic_travel_notes: "Based on Voyager 2: 8.4 years (with Jupiter and Saturn gravity assists). A dedicated Uranus orbiter mission would likely take 10-15 years with current technology."
   },
   {
     name: "Neptune",
     distance_km: 4_351_000_000,
     constellation: "Solar System",
     star_type: "Ice Giant",
-    notes: "Only visited by Voyager 2 in 1989. Voyager 2 took 12 years to reach Neptune. Has the strongest winds in the solar system."
+    notes: "Only visited by Voyager 2 in 1989. Has the strongest winds in the solar system (2,100 km/h).",
+    realistic_travel_days: 4380.0,
+    realistic_travel_notes: "Based on Voyager 2: 12 years (with Jupiter, Saturn, Uranus gravity assists). This was an exceptionally favorable planetary alignment that won't recur until 2153."
   },
   {
     name: "Pluto",
     distance_km: 5_900_000_000,
     constellation: "Solar System",
     star_type: "Dwarf Planet",
-    notes: "New Horizons took 9.5 years to reach Pluto in 2015. Average distance varies significantly due to eccentric orbit."
+    notes: "Average distance varies significantly (4.3-7.4 billion km) due to eccentric orbit. Visited by New Horizons in 2015.",
+    realistic_travel_days: 3470.0,
+    realistic_travel_notes: "Based on New Horizons: 9.5 years (with Jupiter gravity assist). This was the fastest spacecraft ever launched. A mission to orbit Pluto would take much longer."
   },
   {
     name: "Voyager 1 (current position)",
     distance_km: 24_500_000_000,
     constellation: "Solar System",
     star_type: "Spacecraft",
-    notes: "Launched 1977, now in interstellar space. Most distant human-made object. Still communicating with Earth."
+    notes: "Launched 1977, now in interstellar space beyond the heliopause. Most distant human-made object. Still communicating with Earth.",
+    realistic_travel_days: 17155.0,
+    realistic_travel_notes: "Voyager 1 itself took 47 years to reach this distance (launched 1977). No other spacecraft has traveled this far. This is our only data point for travel to the edge of the solar system."
   },
   {
     name: "Oort Cloud (inner edge)",
     distance_km: 300_000_000_000,
     constellation: "Solar System",
     star_type: "Cometary Cloud",
-    notes: "Theoretical sphere of icy objects surrounding the solar system. Source of long-period comets."
+    notes: "Theoretical sphere of icy objects surrounding the solar system. Source of long-period comets. Extends to perhaps 100,000 AU.",
+    realistic_travel_days: nil,
+    realistic_travel_notes: "No spacecraft has approached this distance. At Voyager 1's current speed (17 km/s), reaching the inner Oort Cloud would take approximately 300 years. This represents the true edge of our solar system."
   }
 ]
 
@@ -99,7 +112,9 @@ solar_system_data.each do |body|
     distance_km: body[:distance_km],
     constellation: body[:constellation],
     star_type: body[:star_type],
-    notes: body[:notes]
+    notes: body[:notes],
+    realistic_travel_days: body[:realistic_travel_days],
+    realistic_travel_notes: body[:realistic_travel_notes]
   )
 end
 

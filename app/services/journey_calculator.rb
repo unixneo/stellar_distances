@@ -2,6 +2,7 @@ class JourneyCalculator
   SPEED_OF_LIGHT_KM_S = 299_792.458
   LIGHT_YEAR_KM = 9.461e12
   SECONDS_PER_YEAR = 31_557_600.0  # Julian year
+  SECONDS_PER_DAY = 86_400.0
   
   # Energy constants
   JOULES_PER_KG_TNT = 4.184e6
@@ -17,7 +18,7 @@ class JourneyCalculator
   end
 
   def calculate
-    {
+    result = {
       star: star,
       propulsion_system: propulsion_system,
       payload_mass_kg: payload_mass_kg,
@@ -36,14 +37,30 @@ class JourneyCalculator
       energy_in_world_years: energy_in_world_years,
       generations: generations_required,
       feasibility_assessment: feasibility_assessment,
-      reality_check: reality_check
+      reality_check: reality_check,
+      is_solar_system: solar_system?,
+      calculation_method: calculation_method,
+      calculation_disclaimer: calculation_disclaimer
     }
+    
+    # Add realistic travel info for solar system objects
+    if solar_system? && star.realistic_travel_days.present?
+      result[:realistic_travel_days] = star.realistic_travel_days
+      result[:realistic_travel_human] = format_days(star.realistic_travel_days)
+      result[:realistic_travel_notes] = star.realistic_travel_notes
+    end
+    
+    result
   end
 
   private
 
+  def solar_system?
+    star.constellation == "Solar System"
+  end
+
   def distance_km
-    star.distance_ly * LIGHT_YEAR_KM
+    star.distance_km || (star.distance_ly * LIGHT_YEAR_KM)
   end
 
   def travel_time_seconds
@@ -92,6 +109,38 @@ class JourneyCalculator
       "#{(years * 12).round(1)} months"
     else
       "#{(years * 365.25).round(1)} days"
+    end
+  end
+
+  def format_days(days)
+    if days >= 365.25
+      years = days / 365.25
+      "#{years.round(1)} years"
+    elsif days >= 30
+      months = days / 30.44
+      "#{months.round(1)} months"
+    else
+      "#{days.round(1)} days"
+    end
+  end
+
+  def calculation_method
+    if solar_system?
+      :orbital_mechanics
+    else
+      :straight_line
+    end
+  end
+
+  def calculation_disclaimer
+    if solar_system?
+      "Solar System travel times are based on actual mission data using Hohmann transfer orbits and gravity assists. " \
+      "Spacecraft do not travel in straight lines—they follow curved trajectories determined by orbital mechanics. " \
+      "The 'straight-line' calculation shown for comparison ignores these realities and would require impossible amounts of fuel."
+    else
+      "Interstellar distances are so vast that orbital mechanics become negligible. " \
+      "This calculation assumes constant velocity in a straight line, which is reasonable for interstellar scales. " \
+      "However, it ignores acceleration/deceleration time, which would add significantly to journey duration for realistic propulsion systems."
     end
   end
 
