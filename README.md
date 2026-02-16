@@ -70,6 +70,9 @@ Note: SpaceX Starship is revolutionary for Mars colonization, but doesn't change
 git clone https://github.com/unixneo/stellar_distances.git
 cd stellar_distances
 
+# Set your Ruby version (3.0.4+ required)
+echo "3.2.2" > .ruby-version  # or your installed version
+
 # Install dependencies
 bundle install
 
@@ -80,6 +83,8 @@ rails server
 Visit `http://localhost:3000`
 
 The SQLite database with all destinations and propulsion systems is included in the repository for convenience.
+
+**Note:** `.ruby-version` and `Gemfile.lock` are gitignored since gem versions vary by Ruby version. Each environment runs `bundle install` to generate its own lockfile.
 
 ## Host Configuration
 
@@ -105,8 +110,10 @@ The app includes routes for both direct and proxied access:
 For Apache reverse proxy:
 
 ```apache
-RewriteRule ^stellar(/.*)?$ http://127.0.0.1:3002$1 [P,L,END]
+RewriteRule ^(stellar.*)$ http://127.0.0.1:3002/$1 [P,L,END,QSA]
 ```
+
+The `QSA` flag is required to pass query string parameters to Rails.
 
 ## Requirements
 
