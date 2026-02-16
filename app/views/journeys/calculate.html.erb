@@ -1,0 +1,159 @@
+<%= turbo_frame_tag "results" do %>
+  <div class="mt-8 space-y-6">
+    <!-- Main Result Card -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-white">
+          Journey to <%= @result[:star].name %>
+        </h2>
+        <p class="text-gray-400">
+          Using <%= @result[:propulsion_system].name %>
+        </p>
+      </div>
+
+      <!-- Big Number: Travel Time -->
+      <div class="text-center py-8 border-y border-gray-700">
+        <div class="text-6xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+          <%= @result[:travel_time_human] %>
+        </div>
+        <div class="text-gray-400 mt-2">one-way travel time</div>
+      </div>
+
+      <!-- Key Stats Grid -->
+      <div class="grid md:grid-cols-3 gap-6 mt-6">
+        <div class="bg-gray-700/50 rounded-lg p-4 text-center">
+          <div class="text-2xl font-bold text-blue-400">
+            <%= number_with_delimiter(@result[:distance_ly].round(2)) %>
+          </div>
+          <div class="text-sm text-gray-400">light years</div>
+        </div>
+        
+        <div class="bg-gray-700/50 rounded-lg p-4 text-center">
+          <div class="text-2xl font-bold text-purple-400">
+            <% if @result[:velocity_fraction_c] >= 0.01 %>
+              <%= (@result[:velocity_fraction_c] * 100).round(2) %>%
+            <% else %>
+              <%= number_with_delimiter(@result[:velocity_km_s].round(1)) %> km/s
+            <% end %>
+          </div>
+          <div class="text-sm text-gray-400">
+            <% if @result[:velocity_fraction_c] >= 0.01 %>
+              of light speed
+            <% else %>
+              velocity
+            <% end %>
+          </div>
+        </div>
+        
+        <div class="bg-gray-700/50 rounded-lg p-4 text-center">
+          <div class="text-2xl font-bold text-green-400">
+            <%= number_with_delimiter(@result[:generations]) %>
+          </div>
+          <div class="text-sm text-gray-400">human generations</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Communication Delay Card -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h3 class="text-lg font-semibold text-yellow-400 mb-4">📡 Communication Reality</h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <span class="text-gray-400">Message travel time (one way):</span>
+          <span class="text-white font-medium ml-2">
+            <% if @result[:communication_delay_years] < 1 %>
+              <%= (@result[:communication_delay_years] * 365.25).round(1) %> days
+            <% else %>
+              <%= number_with_delimiter(@result[:communication_delay_years].round(1)) %> years
+            <% end %>
+          </span>
+        </div>
+        <div>
+          <span class="text-gray-400">Round-trip communication:</span>
+          <span class="text-white font-medium ml-2">
+            <% if @result[:round_trip_communication_years] < 1 %>
+              <%= (@result[:round_trip_communication_years] * 365.25).round(1) %> days
+            <% else %>
+              <%= number_with_delimiter(@result[:round_trip_communication_years].round(1)) %> years
+            <% end %>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Energy Requirements Card -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h3 class="text-lg font-semibold text-orange-400 mb-4">⚡ Energy Requirements</h3>
+      <p class="text-gray-400 mb-3">
+        To accelerate <%= number_with_delimiter(@result[:payload_mass_kg].round(0)) %> kg to 
+        <%= @result[:propulsion_system].formatted_velocity %>:
+      </p>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="bg-gray-700/50 rounded p-3">
+          <div class="text-xl font-bold text-orange-400">
+            <%= number_with_delimiter(@result[:energy_in_hiroshima_bombs].round(1)) %>
+          </div>
+          <div class="text-sm text-gray-400">Hiroshima bombs equivalent</div>
+        </div>
+        <div class="bg-gray-700/50 rounded p-3">
+          <div class="text-xl font-bold text-orange-400">
+            <% if @result[:energy_in_world_years] < 0.001 %>
+              <%= (@result[:energy_in_world_years] * 365.25).round(2) %> days
+            <% elsif @result[:energy_in_world_years] < 1 %>
+              <%= (@result[:energy_in_world_years] * 12).round(1) %> months
+            <% else %>
+              <%= number_with_delimiter(@result[:energy_in_world_years].round(1)) %> years
+            <% end %>
+          </div>
+          <div class="text-sm text-gray-400">of total world energy production</div>
+        </div>
+      </div>
+      <p class="text-xs text-gray-500 mt-3">
+        Note: This is just kinetic energy for acceleration. Does not include deceleration, 
+        life support, or propulsion system inefficiencies.
+      </p>
+    </div>
+
+    <!-- Feasibility Assessment -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h3 class="text-lg font-semibold mb-4" style="color: <%= @result[:feasibility_assessment][:color] %>">
+        🎯 Feasibility: <%= @result[:feasibility_assessment][:level].titleize %>
+      </h3>
+      <p class="text-gray-300"><%= @result[:feasibility_assessment][:description] %></p>
+    </div>
+
+    <!-- Reality Checks -->
+    <% if @result[:reality_check].any? %>
+      <div class="bg-red-900/30 rounded-lg p-6 border border-red-800/50">
+        <h3 class="text-lg font-semibold text-red-400 mb-4">⚠️ Reality Checks</h3>
+        <ul class="space-y-2">
+          <% @result[:reality_check].each do |check| %>
+            <li class="flex items-start">
+              <span class="text-red-400 mr-2">•</span>
+              <span class="text-gray-300"><%= check %></span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <!-- Star Info -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h3 class="text-lg font-semibold text-blue-400 mb-3">About <%= @result[:star].name %></h3>
+      <div class="text-sm text-gray-400 space-y-1">
+        <p><strong>Type:</strong> <%= @result[:star].star_type %></p>
+        <p><strong>Constellation:</strong> <%= @result[:star].constellation %></p>
+        <p><strong>Notes:</strong> <%= @result[:star].notes %></p>
+      </div>
+    </div>
+
+    <!-- Propulsion Info -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h3 class="text-lg font-semibold text-purple-400 mb-3">About <%= @result[:propulsion_system].name %></h3>
+      <div class="text-sm text-gray-400 space-y-1">
+        <p><strong>Technology Status:</strong> <%= @result[:propulsion_system].technology_readiness %></p>
+        <p><strong>Description:</strong> <%= @result[:propulsion_system].description %></p>
+      </div>
+    </div>
+  </div>
+<% end %>

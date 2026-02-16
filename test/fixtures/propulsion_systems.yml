@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  velocity_km_s: 1.5
+  velocity_fraction_c: 1.5
+  description: MyText
+  technology_readiness: MyString
+
+two:
+  name: MyString
+  velocity_km_s: 1.5
+  velocity_fraction_c: 1.5
+  description: MyText
+  technology_readiness: MyString
