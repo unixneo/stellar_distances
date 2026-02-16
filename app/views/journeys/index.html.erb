@@ -1,171 +1,145 @@
-<div class="min-h-screen bg-gray-900 text-gray-100">
-  <!-- Header -->
-  <header class="bg-black py-8 border-b border-gray-800">
-    <div class="max-w-6xl mx-auto px-4">
-      <h1 class="text-4xl font-bold text-center bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-        Stellar Distance Calculator
-      </h1>
-      <p class="text-center text-gray-400 mt-2 text-lg">
-        Why we will always be alone, even if we're not
-      </p>
-    </div>
-  </header>
+<h1>🚀 Stellar Distance Calculator</h1>
+<p class="subtitle">Why we will always be alone, even if we're not</p>
 
-  <main class="max-w-6xl mx-auto px-4 py-8">
-    <!-- Calculator Form -->
-    <div class="bg-gray-800 rounded-lg p-6 shadow-xl border border-gray-700">
-      <h2 class="text-2xl font-semibold mb-6 text-blue-400">Plan Your Journey</h2>
-      
-      <%= form_with url: journeys_calculate_path, method: :get, data: { turbo_frame: "results" } do |f| %>
-        <div class="grid md:grid-cols-3 gap-6">
-          <!-- Star Selection -->
-          <div>
-            <label class="block text-sm font-medium text-gray-300 mb-2">Destination</label>
-            <select name="star_id" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-              <optgroup label="Nearby Stars (< 15 ly)">
-                <% @stars.where("distance_ly < 15").each do |star| %>
-                  <option value="<%= star.id %>"><%= star.name %> (<%= star.distance_ly.round(2) %> ly)</option>
-                <% end %>
-              </optgroup>
-              <optgroup label="Notable Stars (15-100 ly)">
-                <% @stars.where("distance_ly >= 15 AND distance_ly < 100").each do |star| %>
-                  <option value="<%= star.id %>"><%= star.name %> (<%= star.distance_ly.round(0) %> ly)</option>
-                <% end %>
-              </optgroup>
-              <optgroup label="Distant Stars (100-1000 ly)">
-                <% @stars.where("distance_ly >= 100 AND distance_ly < 1000").each do |star| %>
-                  <option value="<%= star.id %>"><%= star.name %> (<%= star.distance_ly.round(0) %> ly)</option>
-                <% end %>
-              </optgroup>
-              <optgroup label="Very Distant (> 1000 ly)">
-                <% @stars.where("distance_ly >= 1000").each do |star| %>
-                  <option value="<%= star.id %>"><%= star.name %> (<%= number_with_delimiter(star.distance_ly.round(0)) %> ly)</option>
-                <% end %>
-              </optgroup>
-            </select>
-          </div>
-
-          <!-- Propulsion Selection -->
-          <div>
-            <label class="block text-sm font-medium text-gray-300 mb-2">Propulsion System</label>
-            <select name="propulsion_system_id" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-              <optgroup label="Current Technology">
-                <% @propulsion_systems.where(technology_readiness: ["Operational", "Demonstrated"]).each do |prop| %>
-                  <option value="<%= prop.id %>"><%= prop.name %></option>
-                <% end %>
-              </optgroup>
-              <optgroup label="Near-Future">
-                <% @propulsion_systems.where(technology_readiness: ["Tested Historically", "Proposed"]).each do |prop| %>
-                  <option value="<%= prop.id %>"><%= prop.name %></option>
-                <% end %>
-              </optgroup>
-              <optgroup label="Theoretical / Speculative">
-                <% @propulsion_systems.where(technology_readiness: ["Theoretical", "Theoretical (Banned)", "Far Future", "Speculative"]).each do |prop| %>
-                  <option value="<%= prop.id %>"><%= prop.name %></option>
-                <% end %>
-              </optgroup>
-            </select>
-          </div>
-
-          <!-- Payload Mass -->
-          <div>
-            <label class="block text-sm font-medium text-gray-300 mb-2">Payload Mass (kg)</label>
-            <select name="payload_mass_kg" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-              <option value="0.001">1 gram (microprobe)</option>
-              <option value="1">1 kg (small probe)</option>
-              <option value="100">100 kg (Voyager-class)</option>
-              <option value="1000" selected>1,000 kg (large probe)</option>
-              <option value="10000">10,000 kg (crewed capsule)</option>
-              <option value="100000">100,000 kg (small crewed ship)</option>
-              <option value="1000000">1,000,000 kg (generation ship)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="mt-6 text-center">
-          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-200 transform hover:scale-105">
-            Calculate Journey
-          </button>
-        </div>
-      <% end %>
-    </div>
-
-    <!-- Results Frame -->
-    <%= turbo_frame_tag "results" do %>
-      <!-- Initial state: show intro text -->
-      <div class="mt-8 bg-gray-800 rounded-lg p-8 border border-gray-700">
-        <div class="text-center text-gray-400">
-          <p class="text-lg mb-4">Select a destination and propulsion system to see why interstellar travel is hard.</p>
-          <p class="text-sm">Spoiler: The universe is very, very big.</p>
-        </div>
-      </div>
-    <% end %>
-
-    <!-- Reference Tables -->
-    <div class="mt-12 grid md:grid-cols-2 gap-8">
-      <!-- Stars Table -->
-      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-        <h3 class="text-xl font-semibold mb-4 text-purple-400">Stellar Catalog</h3>
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="text-left text-gray-400 border-b border-gray-700">
-                <th class="pb-2">Star</th>
-                <th class="pb-2">Distance</th>
-                <th class="pb-2">Type</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @stars.limit(12).each do |star| %>
-                <tr class="border-b border-gray-700/50 hover:bg-gray-700/30">
-                  <td class="py-2 font-medium"><%= star.name %></td>
-                  <td class="py-2 text-gray-400"><%= star.formatted_distance %></td>
-                  <td class="py-2 text-gray-500 text-xs"><%= star.star_type %></td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
+<%= form_with url: journeys_calculate_path, method: :get, data: { turbo_frame: "results" } do |f| %>
+  <div class="card">
+    <div class="card-title">🛸 Plan Your Journey</div>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="star_id">Destination</label>
+        <select name="star_id" id="star_id">
+          <optgroup label="Nearby Stars (< 15 light years)">
+            <% @stars.where("distance_ly < 15").each do |star| %>
+              <option value="<%= star.id %>"><%= star.name %> (<%= star.distance_ly.round(2) %> ly)</option>
+            <% end %>
+          </optgroup>
+          <optgroup label="Notable Stars (15-100 ly)">
+            <% @stars.where("distance_ly >= 15 AND distance_ly < 100").each do |star| %>
+              <option value="<%= star.id %>"><%= star.name %> (<%= star.distance_ly.round(0) %> ly)</option>
+            <% end %>
+          </optgroup>
+          <optgroup label="Distant Stars (100-1000 ly)">
+            <% @stars.where("distance_ly >= 100 AND distance_ly < 1000").each do |star| %>
+              <option value="<%= star.id %>"><%= star.name %> (<%= star.distance_ly.round(0) %> ly)</option>
+            <% end %>
+          </optgroup>
+          <optgroup label="Very Distant (> 1000 ly)">
+            <% @stars.where("distance_ly >= 1000").each do |star| %>
+              <option value="<%= star.id %>"><%= star.name %> (<%= number_with_delimiter(star.distance_ly.round(0)) %> ly)</option>
+            <% end %>
+          </optgroup>
+        </select>
       </div>
 
-      <!-- Propulsion Table -->
-      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-        <h3 class="text-xl font-semibold mb-4 text-purple-400">Propulsion Systems</h3>
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="text-left text-gray-400 border-b border-gray-700">
-                <th class="pb-2">System</th>
-                <th class="pb-2">Velocity</th>
-                <th class="pb-2">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @propulsion_systems.each do |prop| %>
-                <tr class="border-b border-gray-700/50 hover:bg-gray-700/30">
-                  <td class="py-2 font-medium"><%= prop.name %></td>
-                  <td class="py-2 text-gray-400"><%= prop.formatted_velocity %></td>
-                  <td class="py-2 text-xs">
-                    <% color = case prop.technology_readiness
-                       when "Operational" then "text-green-400"
-                       when "Demonstrated" then "text-green-300"
-                       when "Tested Historically", "Proposed" then "text-yellow-400"
-                       else "text-red-400"
-                       end %>
-                    <span class="<%= color %>"><%= prop.technology_readiness %></span>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
+      <div class="form-group">
+        <label for="propulsion_system_id">Propulsion System</label>
+        <select name="propulsion_system_id" id="propulsion_system_id">
+          <optgroup label="Current Technology">
+            <% @propulsion_systems.where(technology_readiness: ["Operational", "Demonstrated"]).each do |prop| %>
+              <option value="<%= prop.id %>"><%= prop.name %></option>
+            <% end %>
+          </optgroup>
+          <optgroup label="Near-Future">
+            <% @propulsion_systems.where(technology_readiness: ["Tested Historically", "Proposed"]).each do |prop| %>
+              <option value="<%= prop.id %>"><%= prop.name %></option>
+            <% end %>
+          </optgroup>
+          <optgroup label="Theoretical / Speculative">
+            <% @propulsion_systems.where(technology_readiness: ["Theoretical", "Theoretical (Banned)", "Far Future", "Speculative"]).each do |prop| %>
+              <option value="<%= prop.id %>"><%= prop.name %></option>
+            <% end %>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="payload_mass_kg">Payload Mass</label>
+        <select name="payload_mass_kg" id="payload_mass_kg">
+          <option value="0.001">1 gram (microprobe)</option>
+          <option value="1">1 kg (small probe)</option>
+          <option value="100">100 kg (Voyager-class)</option>
+          <option value="1000" selected>1,000 kg (large probe)</option>
+          <option value="10000">10,000 kg (crewed capsule)</option>
+          <option value="100000">100,000 kg (small ship)</option>
+          <option value="1000000">1,000,000 kg (generation ship)</option>
+        </select>
       </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="mt-12 text-center text-gray-500 text-sm">
-      <p>The universe doesn't care about our ambitions. It's just very, very large.</p>
-      <p class="mt-2">Data based on current astronomical measurements and physics constraints.</p>
-    </footer>
-  </main>
+    <button type="submit">Calculate Journey</button>
+  </div>
+<% end %>
+
+<%= turbo_frame_tag "results" do %>
+  <div class="card">
+    <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+      <p style="font-size: 1.1rem;">Select a destination and propulsion system to calculate your journey.</p>
+      <p class="hint" style="margin-top: 0.5rem;">Spoiler: The universe is very, very big.</p>
+    </div>
+  </div>
+<% end %>
+
+<div class="data-grid">
+  <div class="card">
+    <div class="card-title">⭐ Stellar Catalog</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Star</th>
+          <th>Distance</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @stars.limit(12).each do |star| %>
+          <tr>
+            <td><strong><%= star.name %></strong></td>
+            <td><%= star.formatted_distance %></td>
+            <td style="font-size: 0.75rem; color: var(--text-muted);"><%= star.star_type %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔧 Propulsion Systems</div>
+    <table>
+      <thead>
+        <tr>
+          <th>System</th>
+          <th>Velocity</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @propulsion_systems.each do |prop| %>
+          <tr>
+            <td><strong><%= prop.name %></strong></td>
+            <td><%= prop.formatted_velocity %></td>
+            <td>
+              <% status_class = case prop.technology_readiness
+                 when "Operational", "Demonstrated" then "status-operational"
+                 when "Tested Historically", "Proposed" then "status-tested"
+                 when "Far Future" then "status-far-future"
+                 else "status-theoretical"
+                 end %>
+              <span class="status <%= status_class %>"><%= prop.technology_readiness %></span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>
+
+<div class="card">
+  <div class="card-title">ℹ️ About</div>
+  <p>This calculator uses real astronomical distances and physics-based propulsion velocities to illustrate the fundamental challenge of interstellar travel.</p>
+  <p class="hint" style="margin-top: 0.5rem;">The universe doesn't care about our ambitions. It's just very, very large.</p>
+</div>
+
+<footer>
+  <p>Data based on current astronomical measurements and physics constraints.</p>
+</footer>
