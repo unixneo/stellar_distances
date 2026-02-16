@@ -16,6 +16,8 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+!.ruby-version
+!Gemfile.lock
 
 # Ignore pidfiles, but keep the directory.
 /tmp/pids/*
