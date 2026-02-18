@@ -138,7 +138,7 @@
   <div class="card">
     <div class="card-title">⚡ Energy Requirements</div>
     <p style="color: var(--text-muted);">
-      To accelerate <%= number_with_delimiter(@result[:payload_mass_kg].round(0)) %> kg to 
+      To accelerate <%= number_with_delimiter(@result[:payload_mass_kg].round(0)) %> kg to
       <%= @result[:propulsion_system].formatted_velocity %>:
     </p>
     <div class="energy-grid">
@@ -160,10 +160,84 @@
       </div>
     </div>
     <p class="hint">
-      Note: This is just kinetic energy for acceleration. Does not include deceleration, 
+      Note: This is just kinetic energy for acceleration. Does not include deceleration,
       life support, or propulsion system inefficiencies.
     </p>
   </div>
+
+  <!-- Fuel Requirements (Delta-V) -->
+  <% unless @result[:is_solar_system] %>
+  <div class="card">
+    <div class="card-title">🚀 Fuel Requirements (Tsiolkovsky Rocket Equation)</div>
+
+    <% if @result[:propellantless] %>
+      <div class="disclaimer-box" style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 1rem; margin: 1rem 0;">
+        <strong style="color: #166534;">No propellant required.</strong>
+        <p style="color: #166534; margin: 0.5rem 0 0 0; font-size: 0.9rem;">
+          <%= @result[:propellantless_reason] %>
+        </p>
+        <p style="color: #166534; margin: 0.5rem 0 0 0; font-size: 0.9rem;">
+          The Tsiolkovsky rocket equation (Δv = Vₑ × ln(m₀/mf)) does not apply —
+          this system is not a rocket.
+        </p>
+      </div>
+    <% else %>
+      <p style="color: var(--text-muted);">
+        To carry <%= number_with_delimiter(@result[:payload_mass_kg].round(0)) %> kg
+        using <%= @result[:propulsion_system].name %> (exhaust velocity <%= @result[:exhaust_velocity_km_s] %> km/s):
+      </p>
+
+      <table style="width:100%; border-collapse: collapse; margin: 1rem 0;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--border-color);">
+            <th style="text-align: left; padding: 0.5rem 0;">Scenario</th>
+            <th style="text-align: right; padding: 0.5rem 0;">Mass Ratio</th>
+            <th style="text-align: right; padding: 0.5rem 0;">Fuel Mass Needed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 0.5rem 0;">Accelerate only (one-way coast)</td>
+            <td style="text-align: right;"><%= number_with_delimiter(@result[:mass_ratio_one_way].round(1)) %>:1</td>
+            <td style="text-align: right;"><%= @result[:fuel_mass_one_way_human] %></td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 0.5rem 0;">Accelerate + Decelerate (stop at destination)</td>
+            <td style="text-align: right;"><%= number_with_delimiter(@result[:mass_ratio_with_decel].round(1)) %>:1</td>
+            <td style="text-align: right;"><%= @result[:fuel_mass_with_decel_human] %></td>
+          </tr>
+          <tr>
+            <td style="padding: 0.5rem 0;">Full Round Trip</td>
+            <td style="text-align: right;"><%= number_with_delimiter(@result[:mass_ratio_round_trip].round(1)) %>:1</td>
+            <td style="text-align: right;"><%= @result[:fuel_mass_round_trip_human] %></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="hint">
+        The mass ratio is how many kg of fuel you need per kg of final payload.
+        A ratio of 10:1 means 9 kg of fuel for every 1 kg of payload.
+        Deceleration requires the same Δv as acceleration — squaring the ratio.
+        Round trip compounds this to the 4th power.
+      </p>
+
+      <p style="font-size: 0.9rem; color: var(--text-muted);">
+        <strong>Δv = Vₑ × ln(m₀/mf)</strong> —
+        Exhaust velocity: <%= @result[:exhaust_velocity_km_s] %> km/s |
+        Δv needed: <%= @result[:velocity_km_s] %> km/s
+      </p>
+
+      <p class="hint" style="border-top: 1px solid var(--border-color); padding-top: 0.75rem; margin-top: 0.75rem;">
+        <strong>Model simplifications:</strong> This uses four equal Δv burns at cruise velocity
+        (accelerate from Earth, decelerate at destination, accelerate back, decelerate at Earth).
+        It excludes: Earth's gravity well on departure (~11.2 km/s escape velocity),
+        the destination body's gravity well (5–15 km/s depending on planet), and
+        aerobraking on Earth return (which eliminates burn #4 in practice).
+        Actual fuel requirements for landing-and-returning missions would be higher.
+      </p>
+    <% end %>
+  </div>
+  <% end %>
 
   <!-- Feasibility Assessment -->
   <div class="card">

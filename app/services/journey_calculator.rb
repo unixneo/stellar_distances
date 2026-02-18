@@ -3,11 +3,19 @@ class JourneyCalculator
   LIGHT_YEAR_KM = 9.461e12
   SECONDS_PER_YEAR = 31_557_600.0  # Julian year
   SECONDS_PER_DAY = 86_400.0
-  
+
   # Energy constants
   JOULES_PER_KG_TNT = 4.184e6
   HIROSHIMA_BOMB_JOULES = 63e12  # ~15 kilotons TNT
   WORLD_ANNUAL_ENERGY_JOULES = 5.8e20  # ~580 exajoules
+
+  # Propellant-less explanations
+  PROPELLANTLESS_REASONS = {
+    "Solar Sail"    => "Driven by photon pressure — no propellant is carried or consumed.",
+    "Light Sail"    => "Externally accelerated by ground-based laser — carries no propellant.",
+    "Starshot"      => "Externally accelerated by ground-based laser — carries no propellant.",
+    "Bussard"       => "Scoops interstellar hydrogen as fuel — no propellant stored at launch."
+  }.freeze
 
   attr_reader :star, :propulsion_system, :payload_mass_kg
 
@@ -40,7 +48,19 @@ class JourneyCalculator
       reality_check: reality_check,
       is_solar_system: solar_system?,
       calculation_method: calculation_method,
-      calculation_disclaimer: calculation_disclaimer
+      calculation_disclaimer: calculation_disclaimer,
+      propellantless: propulsion_system.propellantless?,
+      propellantless_reason: propellantless_reason,
+      exhaust_velocity_km_s: propulsion_system.exhaust_velocity_km_s,
+      mass_ratio_one_way: mass_ratio_one_way,
+      fuel_mass_one_way_kg: fuel_mass_one_way_kg,
+      fuel_mass_one_way_human: mass_ratio_one_way ? format_mass(fuel_mass_one_way_kg) : nil,
+      mass_ratio_with_decel: mass_ratio_with_decel,
+      fuel_mass_with_decel_kg: fuel_mass_with_decel_kg,
+      fuel_mass_with_decel_human: mass_ratio_with_decel ? format_mass(fuel_mass_with_decel_kg) : nil,
+      mass_ratio_round_trip: mass_ratio_round_trip,
+      fuel_mass_round_trip_kg: fuel_mass_round_trip_kg,
+      fuel_mass_round_trip_human: mass_ratio_round_trip ? format_mass(fuel_mass_round_trip_kg) : nil
     }
     
     # Add realistic travel info for solar system objects
@@ -160,47 +180,47 @@ class JourneyCalculator
 
   def reality_check
     checks = []
-    
+
     if travel_time_years > 80
       checks << "You will not live to see arrival."
     end
-    
+
     if travel_time_years > 1000
       checks << "Human civilization has only existed for ~10,000 years."
     end
-    
+
     if travel_time_years > 100_000
       checks << "Homo sapiens has only existed for ~300,000 years."
     end
-    
+
     if travel_time_years > 1_000_000
       checks << "The genus Homo has only existed for ~2 million years."
     end
-    
+
     if travel_time_years > 65_000_000
       checks << "Dinosaurs went extinct more recently than this."
     end
-    
+
     if communication_delay_years > 50
       checks << "If you sent a message and got a reply, you'd be dead before it arrived."
     end
-    
+
     if energy_in_world_years > 1
       checks << "Accelerating just #{payload_mass_kg.round(0)} kg requires more than a year of total world energy production."
     end
-    
+
     if energy_in_hiroshima_bombs > 1
       checks << "Kinetic energy equivalent to #{energy_in_hiroshima_bombs.round(1)} Hiroshima bombs."
     end
-    
+
     if propulsion_system.technology_readiness == "Theoretical" || propulsion_system.technology_readiness == "Speculative"
       checks << "This propulsion technology does not yet exist."
     end
-    
+
     if propulsion_system.technology_readiness == "Far Future"
       checks << "This technology may never be practical."
     end
-    
+
     if propulsion_system.name.include?("Orion")
       checks << "Nuclear pulse propulsion is banned by international treaty."
     end
@@ -211,6 +231,95 @@ class JourneyCalculator
       end
     end
 
+    if !solar_system? && mass_ratio_one_way && !mass_ratio_one_way.infinite? && mass_ratio_one_way > 1_000_000
+      ratio_display = format_large_ratio(mass_ratio_one_way)
+      checks << "The fuel-to-payload mass ratio is #{ratio_display}:1 just to accelerate. This exceeds the mass of any object humanity could construct."
+    end
+
     checks
+  end
+
+  # === Tsiolkovsky Rocket Equation ===
+  # Δv = Vₑ × ln(m₀/mf)
+  # where Vₑ = exhaust velocity, m₀ = initial mass, mf = final mass
+
+  def propellantless_reason
+    PROPELLANTLESS_REASONS.find { |k, _| propulsion_system.name.include?(k) }&.last
+  end
+
+  def mass_ratio_one_way
+    return nil if propulsion_system.propellantless?
+    Math::E ** (propulsion_system.velocity_km_s / propulsion_system.exhaust_velocity_km_s)
+  end
+
+  def fuel_mass_one_way_kg
+    return nil unless mass_ratio_one_way
+    payload_mass_kg * (mass_ratio_one_way - 1)
+  end
+
+  def mass_ratio_with_decel
+    return nil unless mass_ratio_one_way
+    mass_ratio_one_way ** 2
+  end
+
+  def fuel_mass_with_decel_kg
+    return nil unless mass_ratio_with_decel
+    payload_mass_kg * (mass_ratio_with_decel - 1)
+  end
+
+  def mass_ratio_round_trip
+    return nil unless mass_ratio_one_way
+    mass_ratio_one_way ** 4
+  end
+
+  def fuel_mass_round_trip_kg
+    return nil unless mass_ratio_round_trip
+    payload_mass_kg * (mass_ratio_round_trip - 1)
+  end
+
+  def format_mass(kg)
+    kg = kg.to_f
+    return "incalculably large" if kg.infinite? || kg.nan? || kg > 1e50
+    if kg < 1_000
+      "#{kg.round(1)} kg"
+    elsif kg < 1e6
+      "#{(kg / 1_000.0).round(1)} tonnes"
+    elsif kg < 1e9
+      "#{(kg / 1e6).round(1)} million tonnes"
+    elsif kg < 1e12
+      "#{(kg / 1e9).round(1)} billion tonnes"
+    elsif kg < 1e15
+      "#{(kg / 1e12).round(1)} trillion tonnes"
+    elsif kg < 1e18
+      "#{(kg / 1e15).round(1)} quadrillion tonnes"
+    elsif kg < 1e21
+      "#{(kg / 1e18).round(1)} quintillion tonnes"
+    elsif kg < 5.972e26  # up to ~100 Earth masses
+      em = kg / 5.972e24
+      "#{em.round(em >= 0.01 ? 2 : 4)} Earth masses"
+    elsif kg < 1.989e30
+      sm = kg / 1.989e30
+      "#{sm.round(sm >= 0.01 ? 2 : 4)} Solar masses"
+    else
+      "#{(kg / 1.989e30).round(2)} Solar masses"
+    end
+  end
+
+  def number_with_delimiter(number)
+    number.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+  end
+
+  def format_large_ratio(ratio)
+    if ratio > 1e30
+      "10^#{Math.log10(ratio).round(1)}"
+    elsif ratio > 1e15
+      "#{(ratio / 1e15).round(1)} quadrillion"
+    elsif ratio > 1e12
+      "#{(ratio / 1e12).round(1)} trillion"
+    elsif ratio > 1e9
+      "#{(ratio / 1e9).round(1)} billion"
+    else
+      "#{(ratio / 1e6).round(1)} million"
+    end
   end
 end

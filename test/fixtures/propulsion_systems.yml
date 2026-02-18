@@ -1,15 +1,44 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# Chemical rocket — slow, low Ve
+voyager:
+  name: Chemical Rocket (Voyager-class)
+  velocity_km_s: 17.0
+  velocity_fraction_c: 0.0000567
+  exhaust_velocity_km_s: 4.5
+  description: Current technology.
+  technology_readiness: Operational
 
-one:
-  name: MyString
-  velocity_km_s: 1.5
-  velocity_fraction_c: 1.5
-  description: MyText
-  technology_readiness: MyString
+# Ion drive — efficient, higher Ve
+ion_drive:
+  name: Ion Drive (Dawn spacecraft)
+  velocity_km_s: 11.0
+  velocity_fraction_c: 0.0000367
+  exhaust_velocity_km_s: 30.4
+  description: Xenon ion propulsion.
+  technology_readiness: Operational
 
-two:
-  name: MyString
-  velocity_km_s: 1.5
-  velocity_fraction_c: 1.5
-  description: MyText
-  technology_readiness: MyString
+# Propellantless — no Ve
+solar_sail:
+  name: Solar Sail (Near-Sun deployment)
+  velocity_km_s: 200.0
+  velocity_fraction_c: 0.000667
+  exhaust_velocity_km_s:
+  description: Light pressure propulsion.
+  technology_readiness: Demonstrated
+
+# High-Ve — very efficient
+antimatter:
+  name: Antimatter Rocket (Theoretical)
+  velocity_km_s: 100000.0
+  velocity_fraction_c: 0.3336
+  exhaust_velocity_km_s: 150000.0
+  description: Matter-antimatter annihilation.
+  technology_readiness: Far Future
+
+# Nuclear pulse — extreme ratio
+nuclear_pulse:
+  name: Nuclear Pulse (Project Orion)
+  velocity_km_s: 10000.0
+  velocity_fraction_c: 0.03336
+  exhaust_velocity_km_s: 65.0
+  description: Nuclear bomb propulsion.
+  technology_readiness: "Theoretical (Banned)"

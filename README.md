@@ -1,4 +1,4 @@
-# 🚀 Stellar Distance Calculator
+# 🚀 Stellar Distance Calculator &nbsp; `v1.1.1`
 
 **Why we will always be alone, even if we're not.**
 
@@ -13,10 +13,29 @@ This calculator illustrates the fundamental challenge of interstellar travel. Ev
 - **43 Destinations**: From the Moon (384,400 km) to the Andromeda Galaxy (2.5 million light years)
 - **11 Propulsion Systems**: From current Voyager-class rockets to theoretical antimatter drives
 - **Realistic Orbital Mechanics**: Solar system travel times based on actual mission data (Hohmann transfers, gravity assists)
-- **Scientific Disclaimers**: Clear explanations of calculation methodology
+- **Fuel Requirements (Tsiolkovsky Rocket Equation)**: For interstellar destinations, shows fuel mass needed for one-way, one-way-with-deceleration, and full round trip — illustrating why rockets are fundamentally impractical for interstellar travel
+- **Scientific Disclaimers**: Clear explanations of calculation methodology and model simplifications
 - **Reality Checks**: Contextualizes travel times against human history and civilization
 - **Energy Requirements**: Shows kinetic energy needed in Hiroshima bombs and world-years of energy production
 - **Communication Delays**: Light-speed message round-trip times
+
+## Changelog
+
+### v1.1.1
+- Added comprehensive test suite: 76 tests covering models, services, and controllers
+- 147 assertions testing physics calculations, validations, and controller behavior
+- Test fixtures with realistic astronomical data (Mars, Proxima Centauri, Andromeda, etc.)
+- Disabled host authorization for test environment
+
+### v1.1.0
+- Added **Fuel Requirements** card using the Tsiolkovsky rocket equation (Δv = Vₑ × ln(m₀/mf))
+- Added exhaust velocity (Ve) data for all 11 propulsion systems
+- Three fuel scenarios shown: accelerate only, accelerate + decelerate, full round trip
+- Propellant-less systems (Solar Sail, Laser Light Sail, Bussard Ramjet) show explanation instead of fuel table
+- Improved mass formatting scale: kg → tonnes → million/billion/trillion/quadrillion/quintillion tonnes → Earth masses → Solar masses
+
+### v1.0.0
+- Initial release
 
 ## Solar System: Realistic Mission Times
 
@@ -123,15 +142,32 @@ The `QSA` flag is required to pass query string parameters to Rails.
 
 ## The Math
 
-### Interstellar (straight-line calculation)
+### Interstellar travel time (straight-line)
 ```
 time = distance / velocity
 ```
 
-This is valid for interstellar distances where orbital mechanics become negligible.
+Valid for interstellar distances where orbital mechanics become negligible.
 
 ### Solar System (orbital mechanics)
-Travel times are based on actual mission data using Hohmann transfer orbits and gravity assists. The straight-line calculation is shown for comparison but doesn't reflect how spacecraft actually navigate.
+Travel times are based on actual mission data using Hohmann transfer orbits and gravity assists. The straight-line calculation is shown for comparison only.
+
+### Fuel Requirements (Tsiolkovsky Rocket Equation)
+```
+Δv = Vₑ × ln(m₀ / mf)
+```
+
+Where Vₑ is exhaust velocity, m₀ is initial (wet) mass, and mf is final (dry) mass. Rearranged to find fuel mass:
+
+```
+fuel = payload × (e^(Δv/Vₑ) - 1)
+```
+
+- One-way (accelerate to cruise): mass ratio = e^(v/Vₑ)
+- With deceleration at destination: mass ratio = e^(2v/Vₑ) = ratio²
+- Full round trip (4 burns): mass ratio = e^(4v/Vₑ) = ratio⁴
+
+**Model simplifications:** Uses cruise velocity as Δv for each burn. Excludes Earth's gravity well (~11.2 km/s escape velocity), destination gravity wells (5–15 km/s), and aerobraking on Earth return. Fuel requirements shown are for interstellar destinations only — solar system travel is governed by orbital mechanics, not this equation.
 
 ### Energy Requirements
 ```

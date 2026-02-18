@@ -19,6 +19,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_16_060233) do
     t.string "technology_readiness"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.float "exhaust_velocity_km_s"
   end
 
   create_table "stars", force: :cascade do |t|

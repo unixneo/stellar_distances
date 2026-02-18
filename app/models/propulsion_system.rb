@@ -15,4 +15,8 @@ class PropulsionSystem < ApplicationRecord
       "#{velocity_km_s.round(1)} km/s"
     end
   end
+
+  def propellantless?
+    exhaust_velocity_km_s.nil?
+  end
 end

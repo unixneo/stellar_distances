@@ -1,17 +1,38 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# Solar system object
+mars:
+  name: Mars
+  distance_km: 225000000
+  distance_ly: 0.0000238
+  constellation: Solar System
+  star_type: Terrestrial Planet
+  notes: Red planet
+  realistic_travel_days: 255.0
+  realistic_travel_notes: Based on Hohmann transfer orbit (~8.5 months).
 
-one:
-  name: MyString
-  distance_ly: 1.5
-  distance_km: 1.5
-  constellation: MyString
-  star_type: MyString
-  notes: MyText
+# Interstellar — nearby
+proxima_centauri:
+  name: Proxima Centauri
+  distance_ly: 4.2465
+  distance_km: 40181369250000
+  constellation: Centaurus
+  star_type: Red Dwarf (M5.5Ve)
+  notes: Closest star to the Sun.
 
-two:
-  name: MyString
-  distance_ly: 1.5
-  distance_km: 1.5
-  constellation: MyString
-  star_type: MyString
-  notes: MyText
+# Interstellar — very distant
+andromeda:
+  name: Andromeda Galaxy (M31)
+  distance_ly: 2537000.0
+  distance_km: 24002657000000000000
+  constellation: Andromeda
+  star_type: Spiral Galaxy
+  notes: Nearest major galaxy.
+
+# Solar system — no realistic travel data
+oort_cloud:
+  name: Oort Cloud (inner edge)
+  distance_km: 300000000000
+  distance_ly: 0.0000317
+  constellation: Solar System
+  star_type: Cometary Cloud
+  notes: Theoretical sphere of icy objects.
+  realistic_travel_notes: No spacecraft has approached this distance.

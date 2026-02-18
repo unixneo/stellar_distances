@@ -307,66 +307,77 @@ propulsion_data = [
   {
     name: "Chemical Rocket (Voyager-class)",
     velocity_km_s: 17.0,
+    exhaust_velocity_km_s: 4.5,
     description: "Current technology. Voyager 1 travels at about 17 km/s relative to the Sun. Limited by the energy density of chemical fuels.",
     technology_readiness: "Operational"
   },
   {
     name: "Chemical Rocket (New Horizons)",
     velocity_km_s: 16.26,
+    exhaust_velocity_km_s: 3.5,
     description: "Fastest spacecraft launched from Earth. Reached Pluto in 9.5 years. Chemical propulsion with Jupiter gravity assist.",
     technology_readiness: "Operational"
   },
   {
     name: "SpaceX Starship (Mars transit)",
     velocity_km_s: 22.0,
+    exhaust_velocity_km_s: 3.7,
     description: "SpaceX's fully reusable heavy-lift vehicle. Uses methane/LOX Raptor engines. Designed for Mars colonization with ~100 passenger capacity. Revolutionary for payload and reusability, but still limited by chemical propulsion physics. Mars transit velocity ~22 km/s via Hohmann transfer.",
     technology_readiness: "In Development"
   },
   {
     name: "Ion Drive (Dawn spacecraft)",
     velocity_km_s: 11.0,
+    exhaust_velocity_km_s: 30.4,
     description: "Xenon ion propulsion. Very efficient but low thrust. Good for long-duration missions within the solar system.",
     technology_readiness: "Operational"
   },
   {
     name: "Solar Sail (Near-Sun deployment)",
     velocity_km_s: 200.0,
+    exhaust_velocity_km_s: nil,
     description: "Light pressure propulsion. Theoretical maximum by diving close to the Sun for acceleration. No fuel needed but limited by material strength.",
     technology_readiness: "Demonstrated"
   },
   {
     name: "Nuclear Thermal Rocket (NERVA-class)",
     velocity_km_s: 50.0,
+    exhaust_velocity_km_s: 9.0,
     description: "Nuclear reactor heats propellant. About 2x more efficient than chemical rockets. Was tested in the 1960s-70s.",
     technology_readiness: "Tested Historically"
   },
   {
     name: "Nuclear Pulse (Project Orion)",
     velocity_km_s: 10000.0,
+    exhaust_velocity_km_s: 65.0,
     description: "Studied by DARPA 1958-1965. Propulsion by detonating nuclear bombs behind a pusher plate. The physics actually works—small-scale tests with conventional explosives were successful. Could reach 3-5% of light speed with a large enough ship. Banned by the 1963 Partial Test Ban Treaty (no nuclear explosions in space). The only interstellar propulsion concept that was both physically feasible AND could have been built with 1960s technology. Requires thousands of nuclear bombs per mission.",
     technology_readiness: "Theoretical (Banned)"
   },
   {
     name: "Laser-Pushed Light Sail (Breakthrough Starshot)",
     velocity_km_s: 60000.0,
+    exhaust_velocity_km_s: nil,
     description: "$100M funded project (2016) to send gram-scale probes to Alpha Centauri. Physics is sound but major engineering challenges remain: requires 100 GW laser array (doesn't exist), sail material that survives intense laser heating (not yet developed), and chips that survive 60,000g acceleration (not yet built). Probes would fly by at 20% c with only hours to photograph target. One-way only—no deceleration, no return. Cannot carry humans. Realistic timeline: 2060-2080 if all challenges are solved.",
     technology_readiness: "Proposed"
   },
   {
     name: "Fusion Rocket (Project Daedalus)",
     velocity_km_s: 36000.0,
+    exhaust_velocity_km_s: 10000.0,
     description: "1970s British Interplanetary Society study using Deuterium/Helium-3 fusion. Designed as a 50-year flyby mission to Barnard's Star. Major obstacles: we have not achieved sustained fusion ignition on Earth (despite 70+ years of trying), Helium-3 is extremely rare (would need mining from lunar regolith or gas giant atmospheres), and the proposed 54,000-ton spacecraft would require orbital assembly over decades. Serious engineering study, but no clear path to construction.",
     technology_readiness: "Theoretical"
   },
   {
     name: "Antimatter Rocket (Theoretical)",
     velocity_km_s: 100000.0,
+    exhaust_velocity_km_s: 150000.0,
     description: "Matter-antimatter annihilation is the most energetic reaction possible—1000x more efficient than fusion. However, current global antimatter production is about 10 nanograms per year at a cost of ~$62.5 trillion per gram. An interstellar mission would need kilograms of antimatter. Storage is also unsolved—antimatter annihilates on contact with normal matter. Even with breakthroughs, this is likely centuries away. The physics is real; the engineering is science fiction.",
     technology_readiness: "Far Future"
   },
   {
     name: "Bussard Ramjet (Interstellar)",
     velocity_km_s: 290000.0,
+    exhaust_velocity_km_s: nil,
     description: "Proposed in 1960 by physicist Robert Bussard. Uses a huge magnetic scoop (thousands of km wide) to collect interstellar hydrogen for fusion fuel. Elegant concept—the faster you go, the more fuel you collect. However, later analysis showed fatal flaws: interstellar medium is too thin, drag from the scoop likely exceeds thrust, and the fusion reaction may not work with pure hydrogen. Most physicists now consider this concept unworkable. Included here as a historical benchmark for 'best case' interstellar travel.",
     technology_readiness: "Speculative"
   }
@@ -377,6 +388,7 @@ propulsion_data.each do |prop|
     name: prop[:name],
     velocity_km_s: prop[:velocity_km_s],
     velocity_fraction_c: prop[:velocity_km_s] / SPEED_OF_LIGHT_KM_S,
+    exhaust_velocity_km_s: prop[:exhaust_velocity_km_s],
     description: prop[:description],
     technology_readiness: prop[:technology_readiness]
   )
