@@ -1,4 +1,4 @@
-# 🚀 Stellar Distance Calculator &nbsp; `v1.1.1`
+# 🚀 Stellar Distance Calculator &nbsp; `v1.2.0`
 
 **Why we will always be alone, even if we're not.**
 
@@ -13,13 +13,28 @@ This calculator illustrates the fundamental challenge of interstellar travel. Ev
 - **43 Destinations**: From the Moon (384,400 km) to the Andromeda Galaxy (2.5 million light years)
 - **11 Propulsion Systems**: From current Voyager-class rockets to theoretical antimatter drives
 - **Realistic Orbital Mechanics**: Solar system travel times based on actual mission data (Hohmann transfers, gravity assists)
-- **Fuel Requirements (Tsiolkovsky Rocket Equation)**: For interstellar destinations, shows fuel mass needed for one-way, one-way-with-deceleration, and full round trip — illustrating why rockets are fundamentally impractical for interstellar travel
+- **Relativistic Fuel Requirements**: Uses the relativistic rocket equation for interstellar destinations, showing one-way, with-deceleration, and round-trip mass ratios/fuel loads
+- **Time Dilation**: Shows both Earth-frame travel time and crew proper time (Lorentz factor γ)
+- **Causality Floor**: Shows minimum possible travel time (`v → c`) as a hard lower bound
 - **Scientific Disclaimers**: Clear explanations of calculation methodology and model simplifications
 - **Reality Checks**: Contextualizes travel times against human history and civilization
-- **Energy Requirements**: Shows kinetic energy needed in Hiroshima bombs and world-years of energy production
+- **Energy Requirements**: Shows relativistic kinetic energy in `15 kt TNT equivalents` and world-years of energy production
 - **Communication Delays**: Light-speed message round-trip times
+- **Doppler Shift Context**: Displays outbound redshift and inbound blueshift factors at cruise velocity
+- **Interstellar Medium Constraint Card**: Shows ISM particle flux, per-particle energy, and shielding-relevant energy load
+- **Velocity Explorer**: Interactive velocity slider with synchronized updates for time, dilation, energy, and fuel plus an energy-vs-velocity curve
 
 ## Changelog
+
+### v1.2.0
+- Replaced classical kinetic energy with relativistic expression: `KE = (γ - 1)mc²`
+- Added Earth-frame vs crew-frame travel time and Lorentz gamma display
+- Replaced classical Tsiolkovsky display with relativistic rocket equation
+- Added Doppler shift outputs for communication planning
+- Added interactive relativistic velocity explorer + energy curve
+- Added interstellar medium (ISM) impact constraints (flux, impact energy, energy load)
+- Renamed ambiguous "bomb" labeling to explicit `15 kt TNT equivalents`
+- Added probe-focused roadmap in [`TODD.md`](TODD.md)
 
 ### v1.1.1
 - Added comprehensive test suite: 76 tests covering models, services, and controllers
@@ -130,6 +145,10 @@ For Apache reverse proxy:
 
 ```apache
 RewriteRule ^(stellar.*)$ http://127.0.0.1:3002/$1 [P,L,END,QSA]
+
+# Required for importmap module assets used by the Stellar app
+RewriteCond %{REQUEST_URI} ^/assets/controllers/ [NC]
+RewriteRule ^ http://127.0.0.1:3002%{REQUEST_URI} [P,L,QSA]
 ```
 
 The `QSA` flag is required to pass query string parameters to Rails.
@@ -152,31 +171,44 @@ Valid for interstellar distances where orbital mechanics become negligible.
 ### Solar System (orbital mechanics)
 Travel times are based on actual mission data using Hohmann transfer orbits and gravity assists. The straight-line calculation is shown for comparison only.
 
-### Fuel Requirements (Tsiolkovsky Rocket Equation)
+### Fuel Requirements (Relativistic Rocket Equation)
 ```
-Δv = Vₑ × ln(m₀ / mf)
-```
-
-Where Vₑ is exhaust velocity, m₀ is initial (wet) mass, and mf is final (dry) mass. Rearranged to find fuel mass:
-
-```
-fuel = payload × (e^(Δv/Vₑ) - 1)
+atanh(v/c) = (Vₑ/c) × ln(m₀ / mf)
 ```
 
-- One-way (accelerate to cruise): mass ratio = e^(v/Vₑ)
-- With deceleration at destination: mass ratio = e^(2v/Vₑ) = ratio²
-- Full round trip (4 burns): mass ratio = e^(4v/Vₑ) = ratio⁴
+Rearranged mass ratio:
+
+```
+mass ratio = exp(atanh(v/c)/(Vₑ/c))
+```
+
+- One-way (accelerate to cruise): `ratio`
+- With deceleration at destination: `ratio²`
+- Full round trip (4 burns): `ratio⁴`
 
 **Model simplifications:** Uses cruise velocity as Δv for each burn. Excludes Earth's gravity well (~11.2 km/s escape velocity), destination gravity wells (5–15 km/s), and aerobraking on Earth return. Fuel requirements shown are for interstellar destinations only — solar system travel is governed by orbital mechanics, not this equation.
 
 ### Energy Requirements
 ```
-KE = 0.5 × mass × velocity²
+KE = (γ - 1) × mass × c²
 ```
 
 Energy comparisons:
-- Hiroshima bomb: ~63 terajoules
+- 15 kt TNT equivalent: ~63 terajoules
 - World annual energy production: ~580 exajoules
+
+### Time Dilation
+```
+γ = 1 / sqrt(1 - (v/c)^2)
+crew_time = earth_time / γ
+```
+
+### Interstellar Medium (ISM) Constraint
+For interstellar trips, the app includes a first-order ISM model assuming average hydrogen density of ~1 atom/cm³ and reports:
+- particle flux at ship velocity
+- relativistic impact energy per proton
+- energy load per square meter
+- total impacts per square meter over mission distance
 
 ## Why This Matters
 

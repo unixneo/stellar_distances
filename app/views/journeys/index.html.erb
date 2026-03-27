@@ -1,7 +1,7 @@
 <h1 id="top">🚀 Stellar Distance Calculator <span style="font-size: 0.45em; font-weight: normal; color: var(--text-muted); vertical-align: middle;">v<%= ApplicationHelper::APP_VERSION %></span></h1>
 <p class="subtitle">Why we will always be alone, even if we're not</p>
 
-<%= form_with url: "/stellar/journey/calculate", method: :get, data: { turbo_frame: "results" } do |f| %>
+<%= form_with url: "/stellar/journey/calculate", method: :get, data: { turbo: false } do |f| %>
   <div class="card">
     <div class="card-title">🛸 Plan Your Journey</div>
     

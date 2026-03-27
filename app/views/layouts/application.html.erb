@@ -7,6 +7,7 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <%= javascript_importmap_tags %>
     
     <style>
       :root {
@@ -136,7 +137,7 @@
       
       .result-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
         gap: 1rem;
       }
       
@@ -305,6 +306,46 @@
       }
       
       .hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+      .slider-box {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 1rem;
+      }
+
+      .slider-box input[type="range"] {
+        width: 100%;
+        margin-top: 0.5rem;
+      }
+
+      .slider-readout {
+        margin-top: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .curve-box {
+        margin-top: 1rem;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #fff;
+      }
+
+      .curve-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-bottom: 0.4rem;
+      }
+
+      .curve-box svg {
+        width: 100%;
+        height: 220px;
+        display: block;
+      }
       
       .back-button {
         display: inline-block;

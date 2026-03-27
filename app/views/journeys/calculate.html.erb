@@ -81,6 +81,26 @@
         <div class="result-item-label">Generations</div>
         <div class="result-item-value"><%= number_with_delimiter(@result[:generations]) %></div>
       </div>
+
+      <div class="result-item">
+        <div class="result-item-label">Earth Frame Time</div>
+        <div class="result-item-value"><%= @result[:travel_time_human] %></div>
+      </div>
+
+      <div class="result-item">
+        <div class="result-item-label">Crew Proper Time</div>
+        <div class="result-item-value"><%= @result[:crew_time_human] %></div>
+      </div>
+
+      <div class="result-item">
+        <div class="result-item-label">Lorentz Gamma (γ)</div>
+        <div class="result-item-value"><%= @result[:time_dilation_gamma].round(4) %></div>
+      </div>
+
+      <div class="result-item">
+        <div class="result-item-label">Causality Floor (v→c)</div>
+        <div class="result-item-value"><%= @result[:minimum_possible_travel_human] %></div>
+      </div>
     </div>
   </div>
 
@@ -132,6 +152,12 @@
     <p class="hint" style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
       Light-speed communication is a hard physical limit. Nothing—no signal, no information—can travel faster.
     </p>
+    <p class="hint" style="margin-top: 0.5rem;">
+      At this cruise speed, departure-phase signals are redshifted to
+      <strong><%= (@result[:doppler_departure_redshift_factor] * 100).round(2) %>%</strong> of emitted frequency.
+      If the craft is inbound, received frequency is blueshifted by
+      <strong><%= @result[:doppler_arrival_blueshift_factor].round(3) %>×</strong>.
+    </p>
   </div>
 
   <!-- Energy Requirements -->
@@ -144,7 +170,7 @@
     <div class="energy-grid">
       <div class="energy-item">
         <div class="energy-value"><%= number_with_delimiter(@result[:energy_in_hiroshima_bombs].round(1)) %></div>
-        <div class="energy-label">Hiroshima bombs equivalent</div>
+        <div class="energy-label">15 kt TNT equivalents</div>
       </div>
       <div class="energy-item">
         <div class="energy-value">
@@ -160,15 +186,201 @@
       </div>
     </div>
     <p class="hint">
-      Note: This is just kinetic energy for acceleration. Does not include deceleration,
-      life support, or propulsion system inefficiencies.
+      Relativistic KE is used: <strong>KE = (γ-1)mc²</strong>. This is just acceleration energy and excludes
+      deceleration, life support, and propulsion inefficiencies.
     </p>
   </div>
+
+  <!-- Interstellar Medium Constraint -->
+  <% unless @result[:is_solar_system] %>
+  <div class="card">
+    <div class="card-title">🧱 Interstellar Medium Constraint</div>
+    <p class="hint" style="margin-bottom: 0.75rem;">
+      These values assume average ISM density of ~1 hydrogen atom/cm³. At relativistic speed, those atoms are high-energy impacts in the ship frame.
+    </p>
+    <div class="result-grid">
+      <div class="result-item">
+        <div class="result-item-label">Hydrogen Density</div>
+        <div class="result-item-value">~1 atom/cm³</div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Impact Flux</div>
+        <div class="result-item-value"><%= @result[:ism_atom_flux_cm2_s_human] %></div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Energy Per Proton</div>
+        <div class="result-item-value"><%= @result[:ism_proton_energy_human] %></div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Energy Load</div>
+        <div class="result-item-value"><%= @result[:ism_power_load_w_m2_human] %></div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Total Hits Over Journey</div>
+        <div class="result-item-value"><%= @result[:ism_total_hits_m2_human] %></div>
+      </div>
+    </div>
+    <p class="hint">
+      This is a major engineering limit for high-speed massive craft: shielding, sputtering, secondary radiation, and heat management become mission-critical.
+    </p>
+  </div>
+  <% end %>
+
+  <!-- Relativity Explorer -->
+  <% unless @result[:is_solar_system] %>
+  <div
+    class="card"
+    data-controller="relativity-slider"
+    data-relativity-slider-distance-ly-value="<%= @result[:distance_ly] %>"
+    data-relativity-slider-payload-mass-kg-value="<%= @result[:payload_mass_kg] %>"
+    data-relativity-slider-exhaust-velocity-km-s-value="<%= @result[:exhaust_velocity_km_s] || 0 %>"
+    data-relativity-slider-initial-beta-value="<%= @result[:velocity_fraction_c] %>"
+    data-relativity-slider-propellantless-value="<%= @result[:propellantless] %>"
+  >
+    <div class="card-title">🎚️ Velocity Explorer (Relativistic)</div>
+    <p class="hint">
+      Propulsion model: <strong><%= @result[:propulsion_system].name %></strong>
+      <% unless @result[:propellantless] %>
+        (exhaust velocity <%= @result[:exhaust_velocity_km_s] %> km/s)
+      <% end %>
+    </p>
+    <p class="hint" style="margin-bottom: 0.75rem;">
+      Slide velocity toward <em>c</em> to see how energy, fuel, and time dilation co-evolve.
+    </p>
+
+    <div class="slider-box">
+      <label for="velocity-slider">Cruise velocity</label>
+      <input
+        id="velocity-slider"
+        type="range"
+        min="0.001"
+        max="0.99"
+        step="0.001"
+        data-relativity-slider-target="slider"
+        data-action="input->relativity-slider#update"
+      >
+      <div class="slider-readout">
+        <span data-relativity-slider-target="velocityPercent"><%= (@result[:velocity_fraction_c] * 100).round(2) %>% c</span>
+        <span data-relativity-slider-target="velocityKmS"><%= number_with_delimiter(@result[:velocity_km_s].round(0)) %> km/s</span>
+      </div>
+    </div>
+
+    <div class="result-grid" style="margin-top: 1rem;">
+      <div class="result-item">
+        <div class="result-item-label">Earth Time</div>
+        <div class="result-item-value" data-relativity-slider-target="earthTime"><%= @result[:travel_time_human] %></div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Crew Time</div>
+        <div class="result-item-value" data-relativity-slider-target="crewTime"><%= @result[:crew_time_human] %></div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Gamma (γ)</div>
+        <div class="result-item-value" data-relativity-slider-target="gamma"><%= @result[:time_dilation_gamma].round(4) %></div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Causality Floor (v→c)</div>
+        <div class="result-item-value" data-relativity-slider-target="causalityFloor"><%= @result[:minimum_possible_travel_human] %></div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Energy</div>
+        <div class="result-item-value" data-relativity-slider-target="energyWorld"><%= number_with_delimiter(@result[:energy_in_world_years].round(2)) %> years</div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">15 kt TNT Eq.</div>
+        <div class="result-item-value" data-relativity-slider-target="energyBombs"><%= number_with_delimiter(@result[:energy_in_hiroshima_bombs].round(2)) %> eq</div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Mass Ratio (1-way)</div>
+        <div class="result-item-value" data-relativity-slider-target="massRatio"><%= @result[:mass_ratio_one_way] ? "#{number_with_delimiter(@result[:mass_ratio_one_way].round(2))}:1" : "N/A" %></div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Fuel Mass (1-way)</div>
+        <div class="result-item-value" data-relativity-slider-target="fuelMass"><%= @result[:fuel_mass_one_way_human] || "No onboard propellant" %></div>
+      </div>
+    </div>
+
+    <div class="curve-box">
+      <div class="curve-title">Energy vs Velocity (log scale)</div>
+      <svg viewBox="0 0 640 240" preserveAspectRatio="none" data-relativity-slider-target="curve"></svg>
+    </div>
+
+    <script>
+      (() => {
+        const widget = document.currentScript.closest("[data-controller~='relativity-slider']");
+        if (!widget) return;
+        const slider = widget.querySelector("[data-relativity-slider-target='slider']");
+        if (!slider || slider.dataset.inlineInit === "true") return;
+        slider.dataset.inlineInit = "true";
+
+        const cKmS = 299792.458;
+        const cMS = 299792458;
+        const worldJ = 5.8e20;
+        const hiroshimaJ = 63e12;
+        const distanceLy = parseFloat(widget.dataset.relativitySliderDistanceLyValue || "0");
+        const payloadKg = parseFloat(widget.dataset.relativitySliderPayloadMassKgValue || "1000");
+        const veKmS = parseFloat(widget.dataset.relativitySliderExhaustVelocityKmSValue || "0");
+        const propellantless = widget.dataset.relativitySliderPropellantlessValue === "true";
+
+        const fmt = (n, d=2) => Number(n).toLocaleString(undefined, { maximumFractionDigits: d });
+        const sci = (n, sig=3) => {
+          if (!Number.isFinite(n)) return "∞";
+          const a = Math.abs(n);
+          if (a === 0) return "0";
+          if (a >= 1e6 || a < 1e-3) {
+            const exp = Math.floor(Math.log10(a));
+            const coeff = n / (10 ** exp);
+            return `${coeff.toFixed(Math.max(0, sig - 1))}e${exp >= 0 ? "+" : ""}${exp}`;
+          }
+          return fmt(n, 2);
+        };
+        const set = (k, v) => { const el = widget.querySelector(`[data-relativity-slider-target='${k}']`); if (el) el.textContent = v; };
+        const years = (y) => y >= 1000 ? `${fmt(y,0)} years` : `${fmt(y,1)} years`;
+
+        const update = () => {
+          const beta = Math.min(0.999999, Math.max(0.000001, parseFloat(slider.value || "0.001")));
+          const gamma = 1 / Math.sqrt(1 - beta * beta);
+          const vKmS = beta * cKmS;
+          const earthYears = distanceLy / beta;
+          const crewYears = earthYears / gamma;
+          const kJ = (gamma - 1) * payloadKg * cMS * cMS;
+          const worldYears = kJ / worldJ;
+          const bombs = kJ / hiroshimaJ;
+
+          set("velocityPercent", `${fmt(beta * 100, 2)}% c`);
+          set("velocityKmS", `${fmt(vKmS, 0)} km/s`);
+          set("gamma", fmt(gamma, 4));
+          set("earthTime", years(earthYears));
+          set("crewTime", years(crewYears));
+          set("causalityFloor", years(distanceLy));
+          set("energyWorld", `${sci(worldYears, 3)} years`);
+          set("energyBombs", `${sci(bombs, 3)} eq`);
+
+          if (propellantless || veKmS <= 0) {
+            set("massRatio", "N/A");
+            set("fuelMass", "No onboard propellant");
+          } else {
+            const ratio = Math.exp(Math.atanh(beta) / (veKmS / cKmS));
+            const fuelKg = payloadKg * (ratio - 1);
+            set("massRatio", Number.isFinite(ratio) ? `${sci(ratio, 3)}:1` : "∞");
+            set("fuelMass", Number.isFinite(fuelKg) ? `${sci(fuelKg, 3)} kg` : "Incalculably large");
+          }
+        };
+
+        slider.addEventListener("input", update);
+        update();
+      })();
+    </script>
+  </div>
+  <% end %>
 
   <!-- Fuel Requirements (Delta-V) -->
   <% unless @result[:is_solar_system] %>
   <div class="card">
-    <div class="card-title">🚀 Fuel Requirements (Tsiolkovsky Rocket Equation)</div>
+    <div class="card-title">🚀 Fuel Requirements (Relativistic Rocket Equation)</div>
+    <p class="hint">
+      Active propulsion system: <strong><%= @result[:propulsion_system].name %></strong>
+    </p>
 
     <% if @result[:propellantless] %>
       <div class="disclaimer-box" style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 1rem; margin: 1rem 0;">
@@ -177,7 +389,7 @@
           <%= @result[:propellantless_reason] %>
         </p>
         <p style="color: #166534; margin: 0.5rem 0 0 0; font-size: 0.9rem;">
-          The Tsiolkovsky rocket equation (Δv = Vₑ × ln(m₀/mf)) does not apply —
+          The relativistic rocket equation does not apply —
           this system is not a rocket.
         </p>
       </div>
@@ -222,14 +434,15 @@
       </p>
 
       <p style="font-size: 0.9rem; color: var(--text-muted);">
-        <strong>Δv = Vₑ × ln(m₀/mf)</strong> —
+        <strong>atanh(v/c) = (Vₑ/c) × ln(m₀/mf)</strong> —
         Exhaust velocity: <%= @result[:exhaust_velocity_km_s] %> km/s |
         Δv needed: <%= @result[:velocity_km_s] %> km/s
       </p>
 
       <p class="hint" style="border-top: 1px solid var(--border-color); padding-top: 0.75rem; margin-top: 0.75rem;">
-        <strong>Model simplifications:</strong> This uses four equal Δv burns at cruise velocity
+        <strong>Model simplifications:</strong> This uses four impulsive burns at cruise velocity
         (accelerate from Earth, decelerate at destination, accelerate back, decelerate at Earth).
+        A physically complete mission profile would integrate thrust continuously over acceleration phases.
         It excludes: Earth's gravity well on departure (~11.2 km/s escape velocity),
         the destination body's gravity well (5–15 km/s depending on planet), and
         aerobraking on Earth return (which eliminates burn #4 in practice).

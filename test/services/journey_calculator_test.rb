@@ -92,11 +92,11 @@ class JourneyCalculatorTest < ActiveSupport::TestCase
   # Energy calculations
   # =========================================================
 
-  test "kinetic energy equals 0.5 * m * v^2" do
-    # v = 17 km/s = 17,000 m/s; m = 1000 kg
-    # KE = 0.5 × 1000 × 17000² = 1.445e11 J
-    expected = 0.5 * 1000 * (17_000 ** 2)
-    assert_in_delta expected, result(:proxima_centauri, :voyager)[:kinetic_energy_joules], 1e6
+  test "kinetic energy uses relativistic expression and matches classical at low speed" do
+    r = result(:proxima_centauri, :voyager)
+    classical = 0.5 * 1000 * (17_000 ** 2)
+    relativistic = r[:kinetic_energy_joules]
+    assert_in_delta classical, relativistic, classical * 0.001
   end
 
   test "kinetic energy scales with payload mass" do
@@ -194,10 +194,38 @@ class JourneyCalculatorTest < ActiveSupport::TestCase
     assert_not r[:propellantless]
   end
 
-  test "mass_ratio_one_way equals e^(v/Ve)" do
-    # Voyager: v=17, Ve=4.5 → e^(17/4.5) ≈ 43.72
-    expected = Math::E ** (17.0 / 4.5)
-    assert_in_delta expected, result(:proxima_centauri, :voyager)[:mass_ratio_one_way], 0.01
+  test "mass_ratio_one_way follows relativistic rocket equation" do
+    beta = 17.0 / JourneyCalculator::SPEED_OF_LIGHT_KM_S
+    ve_fraction = 4.5 / JourneyCalculator::SPEED_OF_LIGHT_KM_S
+    expected = Math.exp(Math.atanh(beta) / ve_fraction)
+    assert_in_delta expected, result(:proxima_centauri, :voyager)[:mass_ratio_one_way], 0.02
+  end
+
+  test "crew proper time is less than Earth-frame time at relativistic speed" do
+    r = result(:proxima_centauri, :antimatter)
+    assert r[:crew_proper_time_years] < r[:travel_time_years]
+    assert r[:time_dilation_gamma] > 1.0
+  end
+
+  test "minimum possible travel time equals light-time distance" do
+    r = result(:proxima_centauri, :voyager)
+    assert_in_delta r[:distance_ly], r[:minimum_possible_travel_years], 0.01
+  end
+
+  test "ism metrics are included for interstellar travel" do
+    r = result(:proxima_centauri, :antimatter)
+    assert r[:ism_atom_flux_m2_s] > 0
+    assert r[:ism_atom_flux_cm2_s] > 0
+    assert r[:ism_proton_energy_joules] > 0
+    assert r[:ism_power_load_w_m2] > 0
+    assert r[:ism_total_hits_m2] > 0
+    assert r[:ism_proton_energy_human].present?
+  end
+
+  test "ism proton impact energy increases with speed" do
+    slow = result(:proxima_centauri, :voyager)[:ism_proton_energy_joules]
+    fast = result(:proxima_centauri, :antimatter)[:ism_proton_energy_joules]
+    assert fast > slow
   end
 
   test "mass_ratio_with_decel is the square of mass_ratio_one_way" do

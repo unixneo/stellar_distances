@@ -1,5 +1,6 @@
 class JourneyCalculator
   SPEED_OF_LIGHT_KM_S = 299_792.458
+  SPEED_OF_LIGHT_M_S = 299_792_458.0
   LIGHT_YEAR_KM = 9.461e12
   SECONDS_PER_YEAR = 31_557_600.0  # Julian year
   SECONDS_PER_DAY = 86_400.0
@@ -8,6 +9,9 @@ class JourneyCalculator
   JOULES_PER_KG_TNT = 4.184e6
   HIROSHIMA_BOMB_JOULES = 63e12  # ~15 kilotons TNT
   WORLD_ANNUAL_ENERGY_JOULES = 5.8e20  # ~580 exajoules
+  PROTON_MASS_KG = 1.67262192369e-27
+  ISM_HYDROGEN_DENSITY_PER_M3 = 1_000_000.0 # ~1 atom/cm^3
+  EV_PER_JOULE = 6.241509074e18
 
   # Propellant-less explanations
   PROPELLANTLESS_REASONS = {
@@ -36,13 +40,32 @@ class JourneyCalculator
       velocity_fraction_c: propulsion_system.velocity_fraction_c,
       travel_time_seconds: travel_time_seconds,
       travel_time_years: travel_time_years,
+      earth_frame_travel_time_years: travel_time_years,
+      crew_proper_time_years: crew_proper_time_years,
+      time_dilation_gamma: lorentz_gamma,
       travel_time_human: format_time(travel_time_years),
+      crew_time_human: format_time(crew_proper_time_years),
       round_trip_years: travel_time_years * 2,
       communication_delay_years: communication_delay_years,
       round_trip_communication_years: communication_delay_years * 2,
+      minimum_possible_travel_years: minimum_possible_travel_years,
+      minimum_possible_travel_human: format_time(minimum_possible_travel_years),
       kinetic_energy_joules: kinetic_energy_joules,
       energy_in_hiroshima_bombs: energy_in_hiroshima_bombs,
       energy_in_world_years: energy_in_world_years,
+      doppler_departure_redshift_factor: doppler_departure_redshift_factor,
+      doppler_arrival_blueshift_factor: doppler_arrival_blueshift_factor,
+      ism_number_density_per_m3: ISM_HYDROGEN_DENSITY_PER_M3,
+      ism_atom_flux_m2_s: ism_atom_flux_m2_s,
+      ism_atom_flux_cm2_s: ism_atom_flux_cm2_s,
+      ism_atom_flux_cm2_s_human: format_scientific(ism_atom_flux_cm2_s, unit: "atoms/cm²/s"),
+      ism_proton_energy_joules: ism_proton_energy_joules,
+      ism_proton_energy_ev: ism_proton_energy_ev,
+      ism_proton_energy_human: format_particle_energy(ism_proton_energy_ev),
+      ism_power_load_w_m2: ism_power_load_w_m2,
+      ism_power_load_w_m2_human: format_scientific(ism_power_load_w_m2, unit: "W/m²"),
+      ism_total_hits_m2: ism_total_hits_m2,
+      ism_total_hits_m2_human: format_scientific(ism_total_hits_m2, unit: "atoms/m²"),
       generations: generations_required,
       feasibility_assessment: feasibility_assessment,
       reality_check: reality_check,
@@ -96,11 +119,23 @@ class JourneyCalculator
     star.distance_ly
   end
 
+  def minimum_possible_travel_years
+    distance_km / SPEED_OF_LIGHT_KM_S / SECONDS_PER_YEAR
+  end
+
+  def lorentz_gamma
+    beta = propulsion_system.velocity_fraction_c
+    return Float::INFINITY if beta >= 1
+    1.0 / Math.sqrt(1.0 - (beta * beta))
+  end
+
+  def crew_proper_time_years
+    travel_time_years / lorentz_gamma
+  end
+
   def kinetic_energy_joules
-    # KE = 0.5 * m * v^2
-    # For relativistic velocities, this is an approximation
-    v = propulsion_system.velocity_km_s * 1000  # convert to m/s
-    0.5 * payload_mass_kg * v * v
+    # Relativistic kinetic energy: KE = (gamma - 1) m c^2
+    (lorentz_gamma - 1.0) * payload_mass_kg * SPEED_OF_LIGHT_M_S * SPEED_OF_LIGHT_M_S
   end
 
   def energy_in_hiroshima_bombs
@@ -205,6 +240,14 @@ class JourneyCalculator
       checks << "If you sent a message and got a reply, you'd be dead before it arrived."
     end
 
+    if propulsion_system.velocity_fraction_c >= 0.1
+      checks << "Relativistic effects matter here: ship time and Earth time diverge by a Lorentz factor of #{lorentz_gamma.round(3)}."
+    end
+    
+    if !solar_system? && propulsion_system.velocity_fraction_c >= 0.1
+      checks << "Interstellar medium impacts become severe at this speed: each hydrogen atom hits at ~#{format_particle_energy(ism_proton_energy_ev)}, creating significant shielding and radiation challenges."
+    end
+
     if energy_in_world_years > 1
       checks << "Accelerating just #{payload_mass_kg.round(0)} kg requires more than a year of total world energy production."
     end
@@ -249,7 +292,13 @@ class JourneyCalculator
 
   def mass_ratio_one_way
     return nil if propulsion_system.propellantless?
-    Math::E ** (propulsion_system.velocity_km_s / propulsion_system.exhaust_velocity_km_s)
+    ve_fraction_c = propulsion_system.exhaust_velocity_km_s / SPEED_OF_LIGHT_KM_S
+    beta = propulsion_system.velocity_fraction_c
+    return Float::INFINITY if beta >= 1 || ve_fraction_c <= 0
+
+    exponent = Math.atanh(beta) / ve_fraction_c
+    return Float::INFINITY if exponent > 709 # exp overflow guard for doubles
+    Math.exp(exponent)
   end
 
   def fuel_mass_one_way_kg
@@ -320,6 +369,65 @@ class JourneyCalculator
       "#{(ratio / 1e9).round(1)} billion"
     else
       "#{(ratio / 1e6).round(1)} million"
+    end
+  end
+
+  def doppler_departure_redshift_factor
+    beta = propulsion_system.velocity_fraction_c
+    Math.sqrt((1.0 - beta) / (1.0 + beta))
+  end
+
+  def doppler_arrival_blueshift_factor
+    1.0 / doppler_departure_redshift_factor
+  end
+
+  def ism_atom_flux_m2_s
+    ISM_HYDROGEN_DENSITY_PER_M3 * propulsion_system.velocity_km_s * 1000.0
+  end
+
+  def ism_atom_flux_cm2_s
+    ism_atom_flux_m2_s / 10_000.0
+  end
+
+  def ism_proton_energy_joules
+    (lorentz_gamma - 1.0) * PROTON_MASS_KG * SPEED_OF_LIGHT_M_S * SPEED_OF_LIGHT_M_S
+  end
+
+  def ism_proton_energy_ev
+    ism_proton_energy_joules * EV_PER_JOULE
+  end
+
+  def ism_power_load_w_m2
+    ism_atom_flux_m2_s * ism_proton_energy_joules
+  end
+
+  def ism_total_hits_m2
+    ISM_HYDROGEN_DENSITY_PER_M3 * distance_km * 1000.0
+  end
+
+  def format_particle_energy(ev)
+    if ev >= 1e9
+      "#{(ev / 1e9).round(2)} GeV"
+    elsif ev >= 1e6
+      "#{(ev / 1e6).round(2)} MeV"
+    elsif ev >= 1e3
+      "#{(ev / 1e3).round(2)} keV"
+    else
+      "#{ev.round(2)} eV"
+    end
+  end
+
+  def format_scientific(value, unit:, sig_figs: 3)
+    return "∞ #{unit}" unless value.finite?
+    return "0 #{unit}" if value.zero?
+
+    abs = value.abs
+    if abs >= 1e5 || abs < 1e-2
+      exponent = Math.log10(abs).floor
+      coeff = value / (10 ** exponent)
+      "#{coeff.round(sig_figs - 1)}e#{exponent >= 0 ? '+' : ''}#{exponent} #{unit}"
+    else
+      "#{value.round(2)} #{unit}"
     end
   end
 end

@@ -67,7 +67,7 @@ class JourneysControllerTest < ActionDispatch::IntegrationTest
       propulsion_system_id: ps.id,
       payload_mass_kg: 1000
     }
-    assert_no_match /Tsiolkovsky Rocket Equation/, response.body
+    assert_no_match /Relativistic Rocket Equation/, response.body
   end
 
   test "GET calculate with interstellar destination shows fuel requirements card" do
@@ -78,7 +78,7 @@ class JourneysControllerTest < ActionDispatch::IntegrationTest
       propulsion_system_id: ps.id,
       payload_mass_kg: 1000
     }
-    assert_match /Tsiolkovsky Rocket Equation/, response.body
+    assert_match /Relativistic Rocket Equation/, response.body
   end
 
   test "GET calculate defaults payload to 1000 kg when omitted" do
